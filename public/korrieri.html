@@ -1,49 +1,69 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paneli i Korrierit</title>
   <style>
     body { font-family: sans-serif; padding: 20px; text-align: center; }
-    button { padding: 15px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
+    button { padding: 14px 18px; font-size: 16px; margin: 8px; cursor: pointer; }
+    #info { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
-<body><button onclick="testoPozicionin()">Testo Pozicionin</button>
+<body>
   <h2>Moduli i Korrierit</h2>
+
+  <button type="button" onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
+  <button type="button" onclick="testoPozicionin()">Testo Pozicionin</button>
+  <br />
+
+  <button type="button" onclick="ndryshoStatusin('Porosia u mor')">1. Porosia u mor</button>
+  <button type="button" onclick="ndryshoStatusin('Rrugës drejt jush')">2. Rrugës</button>
+  <button type="button" onclick="ndryshoStatusin('U dorëzua')">3. U dorëzua</button>
+
   <p id="info">Duke pritur nisjen...</p>
-  <button onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
-  <br>
-  <button onclick="ndryshoStatusin('Porosia u mor')">1. Porosia u mor</button>
-  <button onclick="ndryshoStatusin('Rrugës drejt jush')">2. Rrugës</button>
-  <button onclick="ndryshoStatusin('U dorëzua')">3. U dorëzua</button>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    let watchId = null;
+
+    function dergoKoordinata(lat, lng, burimi) {
+      document.getElementById('info').innerText = `Duke dërguar (${burimi}): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      socket.emit('dergo-koordinatat', { lat, lng });
+    }
 
     function filloGjurmimin() {
       if (!navigator.geolocation) {
-        alert("GPS nuk mbështetet në këtë pajisje.");
+        document.getElementById('info').innerText = 'GPS nuk mbështetet në këtë pajisje.';
         return;
       }
-      navigator.geolocation.watchPosition((pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        document.getElementById(`info`).innerText = `Duke dërguar: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        socket.emit(`dergo-koordinatat`, { lat, lng }); }, (err) => {
-        alert("Lejo aksesin në Location (GPS)!");
-      }, { enableHighAccuracy: true });
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+      document.getElementById('info').innerText = 'Duke kërkuar lokacionin...';
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          dergoKoordinata(pos.coords.latitude, pos.coords.longitude, 'GPS');
+        },
+        (err) => {
+          document.getElementById('info').innerText = `Gabim lokacioni: ${err.message}`;
+        },
+        { enableHighAccuracy: false, maximumAge: 5000, timeout: 10000 }
+      );
+    }
+
+    function testoPozicionin() {
+      // Lëviz pak mbi koordinatat e klientit (42.3702, 21.1483) që të duket qartë në hartë
+      const lat = 42.3725 + (Math.random() - 0.5) * 0.004;
+      const lng = 21.1505 + (Math.random() - 0.5) * 0.004;
+      dergoKoordinata(lat, lng, 'test');
     }
 
     function ndryshoStatusin(statusi) {
       socket.emit('ndrysho-statusin', statusi);
-    }function testoPozicionin() {
-  const lat = 42.3740;
-  const lng = 21.1520;
-  document.getElementById(`info`).innerText = `Duke dërguar (test): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  socket.emit('dergo-koordinatat', { lat, lng });
-}
+      document.getElementById('info').innerText = `Statusi u dërgua: ${statusi}`;
+    }
   </script>
 </body>
 </html>
