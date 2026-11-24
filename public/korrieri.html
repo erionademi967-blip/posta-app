@@ -5,23 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paneli i Korrierit</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; text-align: center; }
-    button { padding: 14px 18px; font-size: 16px; margin: 8px; cursor: pointer; }
-    #info { margin-top: 15px; font-weight: bold; }
+    body { font-family: sans-serif; padding: 20px; background: #111; color: #fff; text-align: center; }
+    button { display: block; width: 100%; max-width: 340px; margin: 10px auto; padding: 14px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-gps { background: #16a34a; color: #fff; }
+    .btn-test { background: #2563eb; color: #fff; }
+    .btn-status { background: #334155; color: #fff; }
+    #info { margin-top: 20px; font-size: 15px; color: #38bdf8; }
   </style>
 </head>
 <body>
-  <h2>Moduli i Korrierit</h2>
+  <h2>Paneli i Korrierit</h2>
 
-  <button type="button" onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
-  <button type="button" onclick="testoPozicionin()">Testo Pozicionin</button>
-  <br />
+  <button class="btn-gps" onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
+  <button class="btn-test" onclick="testoPozicionin()">Testo Pozicionin</button>
 
-  <button type="button" onclick="ndryshoStatusin('Porosia u mor')">1. Porosia u mor</button>
-  <button type="button" onclick="ndryshoStatusin('Rrugës drejt jush')">2. Rrugës</button>
-  <button type="button" onclick="ndryshoStatusin('U dorëzua')">3. U dorëzua</button>
+  <button class="btn-status" onclick="ndryshoStatusin('Porosia u mor')">Porosia u mor</button>
+  <button class="btn-status" onclick="ndryshoStatusin('Rrugës drejt jush')">Rrugës drejt jush</button>
+  <button class="btn-status" onclick="ndryshoStatusin('U dorëzua')">U dorëzua</button>
 
-  <p id="info">Duke pritur nisjen...</p>
+  <p id="info">Në pritje të veprimit...</p>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -38,9 +40,11 @@
         document.getElementById('info').innerText = 'GPS nuk mbështetet në këtë pajisje.';
         return;
       }
+
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
       }
+
       document.getElementById('info').innerText = 'Duke kërkuar lokacionin...';
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
@@ -54,7 +58,6 @@
     }
 
     function testoPozicionin() {
-      // Lëviz pak mbi koordinatat e klientit (42.3702, 21.1483) që të duket qartë në hartë
       const lat = 42.3725 + (Math.random() - 0.5) * 0.004;
       const lng = 21.1505 + (Math.random() - 0.5) * 0.004;
       dergoKoordinata(lat, lng, 'test');
