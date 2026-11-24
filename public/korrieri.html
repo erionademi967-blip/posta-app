@@ -30,8 +30,8 @@
       navigator.geolocation.watchPosition((pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
-        document.getElementById('info').innerText = `Duke dërguar: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        socket.emit('dergo-koordinatat', { lat, lng }); }, (err) => {
+        document.getElementById(`info`).innerText = `Duke dërguar: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        socket.emit(`dergo-koordinatat`, { lat, lng }); }, (err) => {
         alert("Lejo aksesin në Location (GPS)!");
       }, { enableHighAccuracy: true });
     }
@@ -41,7 +41,7 @@
     }function testoPozicionin() {
   const lat = 42.3740;
   const lng = 21.1520;
-  document.getElementById('info').innerText = `Duke dërguar (test): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById(`info`).innerText = `Duke dërguar (test): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   socket.emit('dergo-koordinatat', { lat, lng });
 }
   </script>
