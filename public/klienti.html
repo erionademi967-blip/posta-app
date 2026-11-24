@@ -51,7 +51,7 @@
     }
 
     socket.on('perditeso-koordinatat', (data) => {
-      korrierMarker.setLatLng([data.lat, data.lng]);
+      korrierMarker.setLatLng([data.lat, data.lng]);console.log('Koordinatat e marra:', data);
       map.panTo([data.lat, data.lng]);
 
       const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
