@@ -39,7 +39,7 @@
     function ndryshoStatusin(statusi) {
       socket.emit('ndrysho-statusin', statusi);
     }function testoPozicionin() {
-  const lat = 42.3735;
+  const lat = 42.3740;
   const lng = 21.1520;
   document.getElementById('info').innerText = `Duke dërguar (test): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   socket.emit('dergo-koordinatat', { lat, lng });
