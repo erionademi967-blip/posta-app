@@ -9,7 +9,7 @@
     button { padding: 15px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
   </style>
 </head>
-<body>
+<body><button onclick="testoPozicionin()">Testo Pozicionin</button>
   <h2>Moduli i Korrierit</h2>
   <p id="info">Duke pritur nisjen...</p>
   <button onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
@@ -38,7 +38,12 @@
 
     function ndryshoStatusin(statusi) {
       socket.emit('ndrysho-statusin', statusi);
-    }
+    }function testoPozicionin() {
+  const lat = 42.3735;
+  const lng = 21.1520;
+  document.getElementById('info').innerText = `Duke dërguar (test): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  socket.emit('dergo-koordinatat', { lat, lng });
+}
   </script>
 </body>
 </html>
