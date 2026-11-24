@@ -31,8 +31,7 @@
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         document.getElementById('info').innerText = `Duke dërguar: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        socket.emit('dergo-koordinatat', { lat, lng });
-      }, (err) => {
+        socket.emit('dergo-koordinatat', { lat, lng }); }, (err) => {
         alert("Lejo aksesin në Location (GPS)!");
       }, { enableHighAccuracy: true });
     }
