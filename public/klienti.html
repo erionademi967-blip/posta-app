@@ -55,11 +55,10 @@
       map.panTo([data.lat, data.lng]);
 
       const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
-      document.getElementById('eta').innerText = `Distanca: ${info.distancaKm} km | Arrini për rreth: ${info.minuta} min`;
-    });
+      document.getElementById(`eta`).innerText = `Distanca: ${info.distancaKm} km | Arrini për rreth: ${info.minuta} min`; });
 
     socket.on('statusi-ri', (statusi) => {
-      document.getElementById('statusi').innerText = `Statusi: ${statusi}`;
+      document.getElementById(`statusi`).innerText = `Statusi: ${statusi}`;
     });
   </script>
 </body>
