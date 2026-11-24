@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paneli i Korrierit</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    button { padding: 15px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Moduli i Korrierit</h2>
+  <p id="info">Duke pritur nisjen...</p>
+  <button onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
+  <br>
+  <button onclick="ndryshoStatusin('Porosia u mor')">1. Porosia u mor</button>
+  <button onclick="ndryshoStatusin('Rrugës drejt jush')">2. Rrugës</button>
+  <button onclick="ndryshoStatusin('U dorëzua')">3. U dorëzua</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    function filloGjurmimin() {
+      if (!navigator.geolocation) {
+        alert("GPS nuk mbështetet në këtë pajisje.");
+        return;
+      }
+      navigator.geolocation.watchPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        document.getElementById('info').innerText = `Duke dërguar: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        socket.emit('dergo-vendndodhjen', { lat, lng });
+      }, (err) => {
+        alert("Lejo aksesin në Location (GPS)!");
+      }, { enableHighAccuracy: true });
+    }
+
+    function ndryshoStatusin(statusi) {
+      socket.emit('ndrysho-statusin', statusi);
+    }
+  </script>
+</body>
+</html>
