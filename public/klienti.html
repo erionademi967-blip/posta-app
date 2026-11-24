@@ -50,6 +50,10 @@
       return { distancaKm: distancaKm.toFixed(2), minuta };
     }
 
+    socket.on('connect', () => {
+      console.log('Klienti u lidh me serverin:', socket.id);
+    });
+
     socket.on('perditeso-koordinatat', (data) => {
       console.log('Koordinatat e marra:', data);
       if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
@@ -62,6 +66,7 @@
     });
 
     socket.on('statusi-ri', (statusi) => {
+      console.log('Statusi i ri:', statusi);
       document.getElementById('statusi').innerText = `Statusi: ${statusi}`;
     });
   </script>
