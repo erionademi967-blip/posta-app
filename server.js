@@ -10,8 +10,8 @@ app.use(express.static('public'));
 
 io.on('connection', (socket) => {
   // Kur korrieri dërgon koordinatat, ia përcjellim klientit
-  socket.on('dergo-vendndodhjen', (data) => {
-    io.emit('perditeso-korrierin', data);
+  socket.on('dergo-koordinatat', (data) => {
+    io.emit('perditeso-koordinantat', data);
   });
 
   // Kur korrieri ndryshon statusin e porosisë
