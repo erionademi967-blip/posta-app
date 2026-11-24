@@ -50,7 +50,7 @@
       return { distancaKm: distancaKm.toFixed(2), minuta };
     }
 
-    socket.on('perditeso-korrierin', (data) => {
+    socket.on('perditeso-koordinatat', (data) => {
       korrierMarker.setLatLng([data.lat, data.lng]);
       map.panTo([data.lat, data.lng]);
 
