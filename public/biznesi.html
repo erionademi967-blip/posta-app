@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paneli i Biznesit / Postës</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     body {
       margin: 0;
@@ -14,7 +15,7 @@
       text-align: center;
     }
     .card {
-      max-width: 560px;
+      max-width: 620px;
       margin: 0 auto;
       background: #1b1b1b;
       border: 1px solid #333;
@@ -61,6 +62,19 @@
     button.gray {
       background: #444;
     }
+    #pickerMap {
+      height: 260px;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #383838;
+      margin: 10px 0 14px;
+      cursor: crosshair;
+    }
+    .hint {
+      font-size: 12px;
+      color: #00cec9;
+      margin-bottom: 6px;
+    }
     .link-box {
       background: #121212;
       border: 1px solid #2e2e2e;
@@ -95,16 +109,19 @@
 <body>
   <div class="card">
     <h1>Paneli i Biznesit / Postës</h1>
-    <p class="sub">Shkruaj kodin e porosisë dhe koordinatat e klientit për të gjeneruar linket.</p>
+    <p class="sub">Shkruaj kodin e porosisë dhe kliko në hartë (ose shkruaj koordinatat) për të gjeneruar linket.</p>
 
     <div class="row">
       <input id="porosiaInput" type="text" placeholder="p.sh. KS-103" value="KS-103" />
       <button class="green" onclick="perditesoLinket()">Përditëso Linket</button>
     </div>
 
+    <div class="hint">Kliko mbi hartë për të vendosur pikën e klientit:</div>
+    <div id="pickerMap"></div>
+
     <div class="row">
-      <input id="latInput" type="text" placeholder="Lat p.sh. 42.3702" value="42.3702" />
-      <input id="lngInput" type="text" placeholder="Lng p.sh. 21.1483" value="21.1483" />
+      <input id="latInput" type="text" placeholder="Lat p.sh. 42.3702" value="42.3702" oninput="sinkronizoNgaInput()" />
+      <input id="lngInput" type="text" placeholder="Lng p.sh. 21.1483" value="21.1483" oninput="sinkronizoNgaInput()" />
     </div>
 
     <div class="link-box">
@@ -128,8 +145,22 @@
     <div id="mesazhi" class="msg"></div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const baseUrl = window.location.origin;
+
+    const initialLat = 42.3702;
+    const initialLng = 21.1483;
+
+    const pickerMap = L.map('pickerMap').setView([initialLat, initialLng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(pickerMap);
+
+    let klientPickerMarker = L.marker([initialLat, initialLng])
+      .addTo(pickerMap)
+      .bindPopup('Pika e klientit')
+      .openPopup();
 
     function getKodi() {
       const val = document.getElementById('porosiaInput').value.trim();
@@ -140,19 +171,36 @@
       const lat = parseFloat(document.getElementById('latInput').value.trim());
       const lng = parseFloat(document.getElementById('lngInput').value.trim());
       return {
-        lat: !Number.isNaN(lat) ? lat : 42.3702,
-        lng: !Number.isNaN(lng) ? lng : 21.1483
+        lat: !Number.isNaN(lat) ? lat : initialLat,
+        lng: !Number.isNaN(lng) ? lng : initialLng
       };
     }
 
-    function perditesoLinket() {
+    function perditesoLinket(mesazh = 'Linket u përditësuan.') {
       const kodi = encodeURIComponent(getKodi());
       const { lat, lng } = getKoordinatat();
       document.getElementById('linkKlienti').innerText =
         `${baseUrl}/klienti.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
       document.getElementById('linkKorrieri').innerText =
         `${baseUrl}/korrieri.html?porosia=${kodi}`;
-      document.getElementById('mesazhi').innerText = 'Linket u përditësuan.';
+      document.getElementById('mesazhi').innerText = mesazh;
+    }
+
+    pickerMap.on('click', (e) => {
+      const lat = Number(e.latlng.lat.toFixed(6));
+      const lng = Number(e.latlng.lng.toFixed(6));
+
+      document.getElementById('latInput').value = lat;
+      document.getElementById('lngInput').value = lng;
+      klientPickerMarker.setLatLng([lat, lng]);
+      perditesoLinket(`Pika u zgjodh në hartë (${lat}, ${lng}). Linket u përditësuan.`);
+    });
+
+    function sinkronizoNgaInput() {
+      const { lat, lng } = getKoordinatat();
+      klientPickerMarker.setLatLng([lat, lng]);
+      pickerMap.panTo([lat, lng]);
+      perditesoLinket();
     }
 
     function kopjo(lloji) {
