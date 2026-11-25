@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posta Track — Zgjidh Rolin</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 16px;
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #fff;
+      text-align: center;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+    p.sub {
+      margin: 0 0 24px;
+      color: #a8b0bd;
+      font-size: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    a.role-card {
+      display: block;
+      text-decoration: none;
+      color: #fff;
+      background: #181c24;
+      border: 1px solid #2b3240;
+      border-radius: 14px;
+      padding: 20px 16px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    a.role-card:hover {
+      transform: translateY(-2px);
+      border-color: #00b894;
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .b-admin { background: rgba(108, 92, 231, 0.2); color: #a29bfe; }
+    .b-biz { background: rgba(9, 132, 227, 0.2); color: #74b9ff; }
+    .b-kor { background: rgba(0, 184, 148, 0.2); color: #55efc4; }
+    .b-kl { background: rgba(0, 206, 201, 0.2); color: #81ecec; }
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .desc {
+      font-size: 13px;
+      color: #b5becb;
+      line-height: 1.45;
+    }
+  </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00b894" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Posta Track</h1>
+    <p class="sub">Zgjidhni pamjen tuaj për të vazhduar</p>
+
+    <div class="grid">
+      <a class="role-card" href="/admin.html">
+        <span class="badge b-admin">SISTEMI / TI</span>
+        <div class="title">Kontrolli Qendror</div>
+        <div class="desc">Shiko porositë që po lëvizin, statuset dhe hartën e përgjithshme.</div>
+      </a>
+
+      <a class="role-card" href="/biznesi.html">
+        <span class="badge b-biz">KOMPANIA E POSTËS</span>
+        <div class="title">Paneli i Biznesit</div>
+        <div class="desc">Vendos kodin e porosisë, kliko pikën e klientit në hartë dhe ndaj linket.</div>
+      </a>
+
+      <a class="role-card" href="/korrieri.html?porosia=KS-103">
+        <span class="badge b-kor">KORRIERËT</span>
+        <div class="title">Paneli i Korrierit</div>
+        <div class="desc">Nis GPS-in live ose simulimin dhe përditëso statusin e dorëzimit.</div>
+      </a>
+
+      <a class="role-card" href="/klienti.html?porosia=KS-103&lat=42.3745&lng=21.1515">
+        <span class="badge b-kl">KLIENTI</span>
+        <div class="title">Gjurmimi i Porosisë</div>
+        <div class="desc">Ndiq korrierin në hartë, kohën e mbërritjes dhe progresin në përqindje.</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
