@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Posta Track — Gjurmim Dërgesash</title>
+  <title>Posta Track — Gjurmim Inteligjent</title>
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00b894" />
+  <meta name="theme-color" content="#00d2a0" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -15,171 +15,207 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px 14px 40px;
+      padding: 22px 14px 44px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at top, #182232 0%, #0d1017 65%);
-      color: #f4f6fb;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.18), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.20), transparent 42%),
+        #0b0e14;
+      color: #f8fafc;
       min-height: 100vh;
     }
-    .wrap {
-      max-width: 820px;
+    .container {
+      max-width: 860px;
       margin: 0 auto;
     }
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 20px;
-      padding: 24px;
-      background: linear-gradient(135deg, #0b5ed7 0%, #00897b 55%, #111827 100%);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      margin-bottom: 22px;
+    .banner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 20px;
       flex-wrap: wrap;
+      padding: 26px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(37, 99, 235, 0.22));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      margin-bottom: 22px;
     }
-    .hero-text {
-      max-width: 470px;
+    .banner-left {
+      max-width: 500px;
     }
-    .pill {
+    .live-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.16);
-      backdrop-filter: blur(6px);
+      gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.4px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      line-height: 1.2;
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
     }
-    .hero p {
-      margin: 0 0 16px;
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 14px;
-      line-height: 1.5;
+    .banner h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: -0.4px;
     }
-    .install-btn {
-      display: none;
-      background: #ffffff;
-      color: #0d1017;
+    .banner p {
+      margin: 0 0 18px;
+      color: #cbd5e1;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #10b981;
+      color: #06120e;
       border: none;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.09);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       padding: 11px 16px;
       border-radius: 12px;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      text-decoration: none;
+      display: inline-block;
     }
-    .post-art {
-      width: 210px;
-      height: 145px;
-      border-radius: 16px;
-      background: rgba(13, 16, 23, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+    #installBtn {
+      display: none;
+    }
+    .showcase {
+      width: 225px;
+      height: 155px;
+      border-radius: 18px;
+      background: rgba(11, 14, 20, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px;
+      padding: 12px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
       gap: 14px;
     }
-    a.card {
+    a.role {
       display: block;
       text-decoration: none;
       color: #fff;
-      background: #161b26;
-      border: 1px solid #262f40;
-      border-radius: 16px;
-      padding: 18px;
+      background: #131822;
+      border: 1px solid #222b3d;
+      border-radius: 18px;
+      padding: 20px;
       transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
     }
-    a.card:hover {
-      transform: translateY(-3px);
-      border-color: #00d2a0;
-      background: #1b2230;
+    a.role:hover {
+      transform: translateY(-4px);
+      border-color: #10b981;
+      background: #18202e;
     }
-    .tag {
+    .role-badge {
       display: inline-block;
       font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      padding: 5px 10px;
       border-radius: 999px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-    .t-admin { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
-    .t-biz { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
-    .t-kor { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-    .t-kl { background: rgba(6, 182, 212, 0.2); color: #67e8f9; }
-    .card-title {
+    .rb-1 { background: rgba(139, 92, 246, 0.18); color: #c4b5fd; }
+    .rb-2 { background: rgba(59, 130, 246, 0.18); color: #93c5fd; }
+    .rb-3 { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; }
+    .rb-4 { background: rgba(6, 182, 212, 0.18); color: #67e8f9; }
+    .role-title {
       font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-weight: 800;
+      margin-bottom: 7px;
     }
-    .card-desc {
+    .role-desc {
       font-size: 13px;
-      color: #a3b1c6;
-      line-height: 1.48;
+      color: #94a3b8;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="hero-text">
-        <div class="pill">POSTA EXPRESS • GJURMIM LIVE</div>
-        <h1>Dërgesa të shpejta dhe të qarta në çdo hap</h1>
-        <p>Kompania e postës cakton destinacionin, korrieri ndjek rrugën në telefon dhe klienti sheh mbërritjen në kohë reale.</p>
-        <button id="installBtn" class="install-btn">Instalo Aplikacionin</button>
+  <div class="container">
+    <section class="banner">
+      <div class="banner-left">
+        <div class="live-pill"><span class="dot"></span> SISTEM GJURMIMI NË KOHË REALE</div>
+        <h1>Posta Track — Çdo pako e qartë nga nisja te dera</h1>
+        <p>I thjeshtë për kompaninë e postës, i qartë për korrierin në rrugë dhe i lehtë për klientin që pret porosinë.</p>
+        <div class="actions">
+          <a class="btn-primary" href="/biznesi.html">Krijo Dërgesë të Re</a>
+          <button id="installBtn" class="btn-secondary">Instalo App-in</button>
+        </div>
       </div>
 
-      <div class="post-art" aria-label="Ilustrim i postës dhe dërgesave">
-        <svg viewBox="0 0 220 150" width="190" height="130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="14" y="24" width="192" height="102" rx="14" fill="#131c2e" stroke="#38bdf8" stroke-opacity="0.35" stroke-width="1.5"/>
-          <path d="M32 104C62 66 96 108 134 56C150 36 172 44 188 42" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 5"/>
-          <circle cx="32" cy="104" r="7" fill="#38bdf8"/>
-          <circle cx="186" cy="43" r="8" fill="#f59e0b"/>
-          <circle cx="186" cy="43" r="14" stroke="#f59e0b" stroke-opacity="0.35" stroke-width="3"/>
-          <rect x="64" y="34" width="54" height="36" rx="6" fill="#1e293b" stroke="#93c5fd" stroke-width="1.5"/>
-          <path d="M66 37L91 55L116 37" stroke="#93c5fd" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <div class="showcase" aria-label="Pamje e postës dhe rrugës së dërgesës">
+        <svg viewBox="0 0 220 150" width="195" height="135" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="18" width="200" height="114" rx="16" fill="#0f172a" stroke="#38bdf8" stroke-opacity="0.35" stroke-width="1.5"/>
+          <path d="M28 112C64 78 92 114 134 62C154 38 176 44 192 38" stroke="#10b981" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+          <circle cx="28" cy="112" r="7" fill="#38bdf8"/>
+          <circle cx="190" cy="39" r="8" fill="#fbbf24"/>
+          <circle cx="190" cy="39" r="14" stroke="#fbbf24" stroke-opacity="0.3" stroke-width="3"/>
+          <rect x="62" y="28" width="60" height="40" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+          <path d="M65 32L92 52L119 32" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="28" y="29" fill="#94a3b8" font-size="9" font-family="Arial">POSTA</text>
+          <text x="155" y="65" fill="#fde68a" font-size="9" font-family="Arial">KLIENTI</text>
         </svg>
       </div>
     </section>
 
     <div class="grid">
-      <a class="card" href="/admin.html">
-        <span class="tag t-admin">MENAXHIMI</span>
-        <div class="card-title">Kontrolli Qendror</div>
-        <div class="card-desc">Pamje e përgjithshme e porosive aktive, statuset dhe pozicionet në hartë.</div>
+      <a class="role" href="/admin.html">
+        <span class="role-badge rb-1">TI / MENAXHIMI</span>
+        <div class="role-title">Kontrolli Qendror</div>
+        <div class="role-desc">Shiko porositë live, statuset dhe pozicionet në hartë nga një vend.</div>
       </a>
 
-      <a class="card" href="/biznesi.html">
-        <span class="tag t-biz">POSTA / BIZNESI</span>
-        <div class="card-title">Paneli i Biznesit</div>
-        <div class="card-desc">Vendos kodin e porosisë, kliko pikën e klientit në hartë dhe ndaj linket.</div>
+      <a class="role" href="/biznesi.html">
+        <span class="role-badge rb-2">KOMPANIA E POSTËS</span>
+        <div class="role-title">Paneli i Biznesit</div>
+        <div class="role-desc">Vendos kodin e porosisë, kliko pikën e klientit në hartë dhe kopjo linket.</div>
       </a>
 
-      <a class="card" href="/korrieri.html?porosia=KS-103&lat=42.3745&lng=21.1515">
-        <span class="tag t-kor">KORRIERËT</span>
-        <div class="card-title">Paneli i Korrierit</div>
-        <div class="card-desc">Shiko rrugën ku ke për të shkuar në telefon, nis GPS-in dhe përditëso statusin.</div>
+      <a class="role" href="/korrieri.html?porosia=KS-105&lat=42.3745&lng=21.1515">
+        <span class="role-badge rb-3">KORRIERËT</span>
+        <div class="role-title">Paneli i Korrierit</div>
+        <div class="role-desc">Shiko rrugën drejt klientit në telefon, nis GPS-in dhe përditëso statusin.</div>
       </a>
 
-      <a class="card" href="/klienti.html?porosia=KS-103&lat=42.3745&lng=21.1515">
-        <span class="tag t-kl">KLIENTI</span>
-        <div class="card-title">Gjurmimi i Porosisë</div>
-        <div class="card-desc">Shiko korrierin duke ardhur në hartë, kohën e përafërt dhe progresin e rrugës.</div>
+      <a class="role" href="/klienti.html?porosia=KS-105&lat=42.3745&lng=21.1515">
+        <span class="role-badge rb-4">KLIENTI</span>
+        <div class="role-title">Gjurmimi i Porosisë</div>
+        <div class="role-desc">Ndiq korrierin në hartë, kohën e përafërt të mbërritjes dhe progresin %.</div>
       </a>
     </div>
   </div>
