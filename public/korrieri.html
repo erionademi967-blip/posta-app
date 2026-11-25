@@ -5,68 +5,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paneli i Korrierit</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #111; color: #fff; text-align: center; }
-    button { display: block; width: 100%; max-width: 340px; margin: 10px auto; padding: 14px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; }
-    .btn-gps { background: #16a34a; color: #fff; }
-    .btn-test { background: #2563eb; color: #fff; }
-    .btn-status { background: #334155; color: #fff; }
-    #info { margin-top: 20px; font-size: 15px; color: #38bdf8; }
+    body {
+      margin: 0;
+      padding: 24px 14px;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+    }
+    .card {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 22px;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+    .porosi-badge {
+      display: inline-block;
+      background: #242424;
+      border: 1px solid #444;
+      color: #00cec9;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 11px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+      background: #0984e3;
+    }
+    button.green {
+      background: #00b894;
+    }
+    button.orange {
+      background: #e17055;
+    }
+    button.gray {
+      background: #444;
+    }
+    #info {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.5;
+    }
   </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00b894" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
 </head>
 <body>
-  <h2>Paneli i Korrierit</h2>
+  <div class="card">
+    <h1>Paneli i Korrierit</h1>
+    <div id="porosiBadge" class="porosi-badge">Porosia: KS-101</div>
 
-  <button class="btn-gps" onclick="filloGjurmimin()">Fillo Dërgesën (Dërgo GPS)</button>
-  <button class="btn-test" onclick="testoPozicionin()">Testo Pozicionin</button>
+    <div class="row">
+      <button class="green" onclick="nisesGps()">Nis GPS Live</button>
+      <button class="orange" onclick="ndaloGps()">Ndalo GPS</button>
+      <button class="gray" onclick="simuloLevjzje()">Simulo Lëvizje</button>
+    </div>
 
-  <button class="btn-status" onclick="ndryshoStatusin('Porosia u mor')">Porosia u mor</button>
-  <button class="btn-status" onclick="ndryshoStatusin('Rrugës drejt jush')">Rrugës drejt jush</button>
-  <button class="btn-status" onclick="ndryshoStatusin('U dorëzua')">U dorëzua</button>
+    <div class="row">
+      <button onclick="dergoStatus('U nis nga posta')">U nis nga posta</button>
+      <button onclick="dergoStatus('Rrugës drejt klientit')">Rrugës drejt klientit</button>
+      <button class="green" onclick="dergoStatus('Dorëzuar me sukses')">Dorëzuar me sukses</button>
+    </div>
 
-  <p id="info">Në pritje të veprimit...</p>
+    <div id="info">Gjendja: Në pritje...</div>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    const params = new URLSearchParams(window.location.search);
+    const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
+    document.getElementById('porosiBadge').innerText = `Porosia: ${porosiaId}`;
+
     let watchId = null;
-const params = new URLSearchParams(window.location.search);
-const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
-socket.emit('bashkohu-porosise', porosiaId);
-    function dergoKoordinata(lat, lng, burimi) {
-      document.getElementById('info').innerText = `Duke dërguar (${burimi}): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-      socket.emit('dergo-koordinatat', { lat, lng, porosiaId });
+    let simInterval = null;
+    let simLat = 42.3655;
+    let simLng = 21.1450;
+
+    socket.on('connect', () => {
+      socket.emit('bashkohu-porosise', porosiaId);
+    });
+
+    function dergoKoordinata(lat, lng) {
+      socket.emit('koordinata-korrieri', {
+        porosia: porosiaId,
+        lat,
+        lng
+      });
+      document.getElementById('info').innerText =
+        `Po dërgohen koordinatat për ${porosiaId}:\nLat: ${lat.toFixed(6)} | Lng: ${lng.toFixed(6)}`;
     }
 
-    function filloGjurmimin() {
+    function nisesGps() {
       if (!navigator.geolocation) {
         document.getElementById('info').innerText = 'GPS nuk mbështetet në këtë pajisje.';
         return;
       }
-
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
+      if (simInterval) {
+        clearInterval(simInterval);
+        simInterval = null;
       }
+      if (watchId !== null) return;
 
-      document.getElementById('info').innerText = 'Duke kërkuar lokacionin...';
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
-          dergoKoordinata(pos.coords.latitude, pos.coords.longitude, 'GPS');
+          dergoKoordinata(pos.coords.latitude, pos.coords.longitude);
         },
         (err) => {
-          document.getElementById('info').innerText = `Gabim lokacioni: ${err.message}`;
+          document.getElementById('info').innerText = `Gabim GPS: ${err.message}`;
         },
-        { enableHighAccuracy: false, maximumAge: 5000, timeout: 10000 }
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
       );
     }
 
-    function testoPozicionin() {
-      const lat = 42.3725 + (Math.random() - 0.5) * 0.004;
-      const lng = 21.1505 + (Math.random() - 0.5) * 0.004;
-      dergoKoordinata(lat, lng, 'test');
+    function ndaloGps() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      if (simInterval) {
+        clearInterval(simInterval);
+        simInterval = null;
+      }
+      document.getElementById('info').innerText = 'Transmetimi i pozicionit u ndal.';
     }
 
-    function ndryshoStatusin(statusi) {
-      socket.emit('ndrysho-statusin', { statusi, porosiaId });
+    function simuloLevjzje() {
+      ndaloGps();
+      simLat = 42.3655;
+      simLng = 21.1450;
+      dergoStatus('Rrugës drejt klientit');
+
+      simInterval = setInterval(() => {
+        simLat += 0.0005;
+        simLng += 0.0003;
+        dergoKoordinata(simLat, simLng);
+      }, 1500);
+    }
+
+    function dergoStatus(statusi) {
+      socket.emit('ndrysho-statusin', {
+        porosia: porosiaId,
+        statusi
+      });
       document.getElementById('info').innerText = `Statusi u dërgua: ${statusi}`;
     }
   </script>
