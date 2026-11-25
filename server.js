@@ -9,17 +9,28 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-  // Kur korrieri dërgon koordinatat, ia përcjellim klientit
-  socket.on('dergo-koordinatat', (data) => {
-    io.emit('perditeso-koordinatat', data);
+  socket.on('bashkohu-porosise', (porosiaId) => {
+    const id = String(porosiaId || 'KS-101').trim() || 'KS-101';
+    socket.data.porosiaId = id;
+    socket.join(id);
   });
 
-  // Kur korrieri ndryshon statusin e porosisë
-  socket.on('ndrysho-statusin', (statusi) => {
-    io.emit('statusi-ri', statusi);
+  socket.on('dergo-koordinatat', (data) => {
+    const id = socket.data.porosiaId || (data && data.porosiaId) || 'KS-101';
+    io.to(id).emit('perditeso-koordinatat', data);
+  });
+
+  socket.on('ndrysho-statusin', (payload) => {
+    const id =
+      socket.data.porosiaId ||
+      (payload && typeof payload === 'object' ? payload.porosiaId : null) ||
+      'KS-101';
+    const statusi = payload && typeof payload === 'object' ? payload.statusi : payload;
+    io.to(id).emit('statusi-ri', statusi);
   });
 });
 
-server.listen(3000, () => {
-  console.log('Aplikacioni u hap te: http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Serveri po punon në portin ${PORT}`);
 });
