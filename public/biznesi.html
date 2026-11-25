@@ -6,79 +6,91 @@
   <title>Paneli i Biznesit / Postës</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 24px 14px;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
+      padding: 20px 14px 36px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #182232 0%, #0d1017 65%);
+      color: #f4f6fb;
       text-align: center;
     }
     .card {
-      max-width: 620px;
+      max-width: 640px;
       margin: 0 auto;
-      background: #1b1b1b;
-      border: 1px solid #333;
-      border-radius: 12px;
+      background: #161b26;
+      border: 1px solid #262f40;
+      border-radius: 16px;
       padding: 22px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    .top-nav a {
+      color: #5ef2c8;
+      text-decoration: none;
+      font-weight: 600;
     }
     h1 {
-      margin-top: 0;
+      margin: 0 0 6px;
       font-size: 22px;
     }
     p.sub {
-      color: #bbb;
+      color: #a3b1c6;
       font-size: 14px;
-      margin-bottom: 18px;
+      margin: 0 0 18px;
+      line-height: 1.45;
     }
     .row {
       display: flex;
       gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     input {
       padding: 10px 12px;
       font-size: 15px;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #111;
+      border-radius: 10px;
+      border: 1px solid #2f3b52;
+      background: #0e121a;
       color: #fff;
-      width: 230px;
+      width: 220px;
     }
     button {
       padding: 10px 14px;
       font-size: 14px;
+      font-weight: 700;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       color: #fff;
-      background: #0984e3;
+      background: #2563eb;
     }
-    button.green {
-      background: #00b894;
-    }
-    button.gray {
-      background: #444;
-    }
-    #pickerMap {
-      height: 260px;
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid #383838;
-      margin: 10px 0 14px;
-      cursor: crosshair;
-    }
+    button.green { background: #059669; }
+    button.gray { background: #2d3748; }
     .hint {
       font-size: 12px;
-      color: #00cec9;
-      margin-bottom: 6px;
+      color: #67e8f9;
+      margin: 8px 0 6px;
+    }
+    #pickerMap {
+      height: 270px;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #2d3748;
+      margin-bottom: 14px;
+      cursor: crosshair;
     }
     .link-box {
-      background: #121212;
-      border: 1px solid #2e2e2e;
-      border-radius: 8px;
+      background: #10141d;
+      border: 1px solid #252e3f;
+      border-radius: 12px;
       padding: 12px;
       margin-top: 12px;
       text-align: left;
@@ -86,16 +98,17 @@
       font-size: 13px;
     }
     .label {
-      color: #00cec9;
-      font-weight: bold;
-      margin-bottom: 4px;
+      color: #67e8f9;
+      font-weight: 700;
+      margin-bottom: 5px;
       display: block;
     }
     .msg {
-      margin-top: 10px;
-      color: #00b894;
+      margin-top: 12px;
+      color: #5ef2c8;
       font-size: 13px;
       min-height: 18px;
+      font-weight: 600;
     }
   </style>
   <link rel="manifest" href="/manifest.json" />
@@ -108,15 +121,20 @@
 </head>
 <body>
   <div class="card">
+    <div class="top-nav">
+      <a href="/">← Faqja Kryesore</a>
+      <a href="/admin.html">Kontrolli Qendror →</a>
+    </div>
+
     <h1>Paneli i Biznesit / Postës</h1>
-    <p class="sub">Shkruaj kodin e porosisë dhe kliko në hartë (ose shkruaj koordinatat) për të gjeneruar linket.</p>
+    <p class="sub">Shkruaj kodin e porosisë dhe kliko në hartë (ose ndrysho koordinatat) për të gjeneruar linket.</p>
 
     <div class="row">
-      <input id="porosiaInput" type="text" placeholder="p.sh. KS-103" value="KS-103" />
+      <input id="porosiaInput" type="text" placeholder="p.sh. KS-105" value="KS-105" />
       <button class="green" onclick="perditesoLinket()">Përditëso Linket</button>
     </div>
 
-    <div class="hint">Kliko mbi hartë për të vendosur pikën e klientit:</div>
+    <div class="hint">Kliko mbi hartë për të vendosur pikën e saktë të klientit:</div>
     <div id="pickerMap"></div>
 
     <div class="row">
@@ -127,7 +145,7 @@
     <div class="link-box">
       <span class="label">Linku për Klientin:</span>
       <div id="linkKlienti"></div>
-      <div class="row" style="margin-top:8px; justify-content:flex-start;">
+      <div class="row" style="margin-top:10px; margin-bottom:0; justify-content:flex-start;">
         <button onclick="kopjo('klient')">Kopjo Linkun</button>
         <button class="gray" onclick="hap('klient')">Hap Klientin</button>
       </div>
@@ -136,7 +154,7 @@
     <div class="link-box">
       <span class="label">Linku për Korrierin:</span>
       <div id="linkKorrieri"></div>
-      <div class="row" style="margin-top:8px; justify-content:flex-start;">
+      <div class="row" style="margin-top:10px; margin-bottom:0; justify-content:flex-start;">
         <button onclick="kopjo('korrier')">Kopjo Linkun</button>
         <button class="gray" onclick="hap('korrier')">Hap Korrierin</button>
       </div>
@@ -148,7 +166,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const baseUrl = window.location.origin;
-
     const initialLat = 42.3702;
     const initialLng = 21.1483;
 
@@ -182,7 +199,7 @@
       document.getElementById('linkKlienti').innerText =
         `${baseUrl}/klienti.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
       document.getElementById('linkKorrieri').innerText =
-        `${baseUrl}/korrieri.html?porosia=${kodi}`;
+        `${baseUrl}/korrieri.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
       document.getElementById('mesazhi').innerText = mesazh;
     }
 
