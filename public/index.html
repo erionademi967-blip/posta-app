@@ -5,68 +5,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Posta Track — Zgjidh Rolin</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 28px 16px;
       font-family: Arial, sans-serif;
-      background: #0f1115;
-      color: #fff;
+      background-color: #0f1115;
+      color: #ffffff;
       text-align: center;
     }
     .wrap {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
     }
     h1 {
       margin: 0 0 8px;
-      font-size: 26px;
+      font-size: 28px;
+      color: #ffffff;
     }
     p.sub {
-      margin: 0 0 24px;
+      margin: 0 0 26px;
       color: #a8b0bd;
       font-size: 15px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
     }
     a.role-card {
       display: block;
       text-decoration: none;
-      color: #fff;
-      background: #181c24;
-      border: 1px solid #2b3240;
+      color: #ffffff;
+      background-color: #181c24;
+      border: 1px solid #2d3545;
       border-radius: 14px;
       padding: 20px 16px;
-      transition: transform 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
     }
     a.role-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: #00b894;
+      background-color: #1e2430;
     }
     .badge {
       display: inline-block;
       padding: 5px 10px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
-      margin-bottom: 10px;
+      letter-spacing: 0.4px;
+      margin-bottom: 12px;
     }
-    .b-admin { background: rgba(108, 92, 231, 0.2); color: #a29bfe; }
-    .b-biz { background: rgba(9, 132, 227, 0.2); color: #74b9ff; }
-    .b-kor { background: rgba(0, 184, 148, 0.2); color: #55efc4; }
-    .b-kl { background: rgba(0, 206, 201, 0.2); color: #81ecec; }
+    .b-admin {
+      background-color: rgba(108, 92, 231, 0.22);
+      color: #b8b2ff;
+    }
+    .b-biz {
+      background-color: rgba(9, 132, 227, 0.22);
+      color: #7cc4ff;
+    }
+    .b-kor {
+      background-color: rgba(0, 184, 148, 0.22);
+      color: #5ef2c8;
+    }
+    .b-kl {
+      background-color: rgba(0, 206, 201, 0.22);
+      color: #86f3f0;
+    }
     .title {
       font-size: 18px;
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .desc {
       font-size: 13px;
-      color: #b5becb;
-      line-height: 1.45;
+      color: #b7c0ce;
+      line-height: 1.5;
     }
   </style>
   <link rel="manifest" href="/manifest.json" />
