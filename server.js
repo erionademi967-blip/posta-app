@@ -11,7 +11,7 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
   // Kur korrieri dërgon koordinatat, ia përcjellim klientit
   socket.on('dergo-koordinatat', (data) => {
-    io.emit('perditeso-koordinantat', data);
+    io.emit('perditeso-koordinatat', data);
   });
 
   // Kur korrieri ndryshon statusin e porosisë
