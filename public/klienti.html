@@ -77,7 +77,7 @@ async function perditesoRrugen(lat1, lng1, lat2, lng2) {
 perditesoRrugen(data.lat, data.lng, klientLat, klientLng);
 ```
       const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
-      document.getElementById('eta').innerText = `Distanca: ${info.distancaKm} km | Arrin për rreth: ${info.minuta} min`;
+      document.getElementById(`eta`).innerText = `Distanca: ${info.distancaKm} km | Arrin për rreth: ${info.minuta} min`;
     });
 
     socket.on('statusi-ri', (statusi) => {
