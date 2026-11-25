@@ -94,10 +94,11 @@
 
       vijaRruges.setLatLngs([[lat1, lng1], [lat2, lng2]]);
     }
-
+const params = new URLSearchParams(window.location.search);
+const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
     socket.on('connect', () => {
       console.log('Klienti u lidh me serverin:', socket.id);
-    });
+    socket.emit('bashkohu-porosise', porosiaId);});
 
     socket.on('perditeso-koordinatat', (data) => {
       console.log('Koordinatat e marra:', data);
