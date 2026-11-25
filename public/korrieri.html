@@ -29,10 +29,12 @@
   <script>
     const socket = io();
     let watchId = null;
-
+const params = new URLSearchParams(window.location.search);
+const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
+socket.emit('bashkohu-porosise', porosiaId);
     function dergoKoordinata(lat, lng, burimi) {
       document.getElementById('info').innerText = `Duke dërguar (${burimi}): ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-      socket.emit('dergo-koordinatat', { lat, lng });
+      socket.emit('dergo-koordinatat', { lat, lng, porosiaId });
     }
 
     function filloGjurmimin() {
@@ -64,7 +66,7 @@
     }
 
     function ndryshoStatusin(statusi) {
-      socket.emit('ndrysho-statusin', statusi);
+      socket.emit('ndrysho-statusin', { statusi, porosiaId });
       document.getElementById('info').innerText = `Statusi u dërgua: ${statusi}`;
     }
   </script>
