@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Erioni Delivery — Gjurmimi i Porosisë</title>
+  <title>Erioni Delivery — Gjurmim i Plotë Live</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#38bdf8" />
@@ -26,12 +26,12 @@
       border-bottom: 1px solid #1e293b;
     }
     .hud-top {
-      max-width: 840px;
-      margin: 0 auto 6px;
+      max-width: 900px;
+      margin: 0 auto 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     #statusi {
@@ -39,11 +39,35 @@
       font-weight: 900;
       color: #f8fafc;
     }
-    .chips {
+    .controls-bar {
       display: flex;
       gap: 6px;
       align-items: center;
       flex-wrap: wrap;
+    }
+    .code-input {
+      background: #070a10;
+      border: 1px solid #2b3a55;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      width: 115px;
+    }
+    .mini-btn {
+      background: #172236;
+      border: 1px solid #2b3a55;
+      color: #7dd3fc;
+      padding: 6px 10px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      border-color: #38bdf8;
+      background: #1d2c46;
     }
     .chip {
       background: rgba(56, 189, 248, 0.16);
@@ -60,14 +84,14 @@
       border-color: rgba(16, 185, 129, 0.35);
     }
     #eta {
-      max-width: 840px;
+      max-width: 900px;
       margin: 0 auto 8px;
       font-size: 13.5px;
       color: #7dd3fc;
       font-weight: 700;
     }
     .progres-wrap {
-      max-width: 840px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .progres-box {
@@ -92,8 +116,20 @@
       color: #6ee7b7;
       font-weight: 800;
     }
+    .delivered-banner {
+      display: none;
+      max-width: 900px;
+      margin: 8px auto 0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      font-size: 13px;
+      font-weight: 800;
+    }
     #map {
-      height: calc(100vh - 134px);
+      height: calc(100vh - 144px);
       min-height: 340px;
       width: 100%;
     }
@@ -103,20 +139,29 @@
   <div class="hud">
     <div class="hud-top">
       <div id="statusi">Statusi: Rruga drejt adresës suaj...</div>
-      <div class="chips">
+      <div class="controls-bar">
         <span id="codeChip" class="chip">Porosia: ED-205</span>
         <span id="nrChip" class="chip chip-green" style="display:none;"></span>
+        <input id="switchCodeInput" class="code-input" type="text" placeholder="Kodi p.sh. ED-205" />
+        <button class="mini-btn" onclick="nderroniPorosine()">Ndrysho</button>
+        <button class="mini-btn" onclick="fokusoRrugen()">Shiko Rrugën</button>
       </div>
     </div>
+
     <div id="eta">Distanca: -- km | Arrin për rreth: -- min</div>
+
     <div class="progres-wrap">
       <div class="progres-box">
         <div id="progresBar" class="progres-bar"></div>
       </div>
       <div class="progres-meta">
         <span id="progresTekst">Progresi i rrugës: 0%</span>
-        <span>Erioni Delivery • Live</span>
+        <span>Erioni Delivery • Gjurmim Live</span>
       </div>
+    </div>
+
+    <div id="deliveredBanner" class="delivered-banner">
+      Porosia është dorëzuar me sukses. Faleminderit që zgjodhët Erioni Delivery!
     </div>
   </div>
 
@@ -131,6 +176,8 @@
     const nrShtepise = (params.get('nr') || '').trim();
 
     document.getElementById('codeChip').innerText = `Porosia: ${porosiaId}`;
+    document.getElementById('switchCodeInput').value = porosiaId;
+
     if (nrShtepise) {
       const nrChip = document.getElementById('nrChip');
       nrChip.innerText = nrShtepise;
@@ -142,8 +189,8 @@
     const klientLat = !Number.isNaN(rawLat) ? rawLat : 42.3702;
     const klientLng = !Number.isNaN(rawLng) ? rawLng : 21.1483;
 
-    const startLat = 42.3655;
-    const startLng = 21.1450;
+    let currentCourierLat = 42.3655;
+    let currentCourierLng = 21.1450;
     let distancaFillestareKm = null;
 
     const map = L.map('map').setView([klientLat, klientLng], 14);
@@ -153,13 +200,29 @@
 
     const klientPopup = nrShtepise ? `Adresa e Klientit (${nrShtepise})` : 'Adresa e Klientit';
     L.marker([klientLat, klientLng]).addTo(map).bindPopup(klientPopup).openPopup();
-    const korrierMarker = L.marker([startLat, startLng]).addTo(map).bindPopup('Korrieri');
+    const korrierMarker = L.marker([currentCourierLat, currentCourierLng]).addTo(map).bindPopup('Korrieri');
 
-    const vijadruges = L.polyline([[startLat, startLng], [klientLat, klientLng]], {
+    const vijadruges = L.polyline([[currentCourierLat, currentCourierLng], [klientLat, klientLng]], {
       color: '#38bdf8',
       weight: 5,
-      opacity: 0.9
+      opacity: 0.92
     }).addTo(map);
+
+    function nderroniPorosine() {
+      const kodiRi = (document.getElementById('switchCodeInput').value || '').trim();
+      if (!kodiRi) return;
+      const url = new URL(window.location.href);
+      url.searchParams.set('porosia', kodiRi);
+      window.location.href = url.toString();
+    }
+
+    function fokusoRrugen() {
+      const bounds = L.latLngBounds([
+        [currentCourierLat, currentCourierLng],
+        [klientLat, klientLng]
+      ]);
+      map.fitBounds(bounds, { padding: [36, 36] });
+    }
 
     function llogaritMinutat(lat1, lng1, lat2, lng2) {
       const R = 6371;
@@ -221,6 +284,8 @@
 
     socket.on('perditeso-koordinatat', (data) => {
       if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
+      currentCourierLat = data.lat;
+      currentCourierLng = data.lng;
       korrierMarker.setLatLng([data.lat, data.lng]);
       map.panTo([data.lat, data.lng]);
       perditesoRrugen(data.lat, data.lng, klientLat, klientLng);
@@ -228,12 +293,16 @@
 
     socket.on('statusi-ri', (data) => {
       const teksti = typeof data === 'string' ? data : (data && data.statusi);
-      if (teksti) {
-        document.getElementById('statusi').innerText = `Statusi: ${teksti}`;
+      if (!teksti) return;
+      document.getElementById('statusi').innerText = `Statusi: ${teksti}`;
+      if (teksti.toLowerCase().includes('dorëz')) {
+        document.getElementById('progresBar').style.width = '100%';
+        document.getElementById('progresTekst').innerText = 'Progresi i rrugës: 100%';
+        document.getElementById('deliveredBanner').style.display = 'block';
       }
     });
 
-    perditesoRrugen(startLat, startLng, klientLat, klientLng);
+    perditesoRrugen(currentCourierLat, currentCourierLng, klientLat, klientLng);
   </script>
 </body>
 </html>
