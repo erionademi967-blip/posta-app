@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontrolli Qendror — Posta Track</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 18px;
+      background: #181c24;
+      border-bottom: 1px solid #2b3240;
+    }
+    header a {
+      color: #55efc4;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 60px);
+    }
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      #adminMap {
+        height: 360px;
+      }
+    }
+    .sidebar {
+      padding: 14px;
+      background: #141820;
+      border-right: 1px solid #2b3240;
+      overflow-y: auto;
+    }
+    .order-item {
+      background: #1d222d;
+      border: 1px solid #2e3646;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .order-id {
+      font-weight: bold;
+      color: #81ecec;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    .muted {
+      color: #a8b0bd;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    #adminMap {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00b894" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <strong>Kontrolli Qendror i Dërgesave</strong>
+    <a href="/biznesi.html">+ Porosi e Re (Biznesi)</a>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="muted" style="margin-top:0; margin-bottom:10px;">
+        Porositë që dërgojnë sinjal live shfaqen këtu:
+      </div>
+      <div id="listaPorosive">
+        <div class="order-item">
+          <div class="muted">Në pritje të sinjalit nga korrierët...</div>
+        </div>
+      </div>
+    </aside>
+    <div id="adminMap"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const adminMap = L.map('adminMap').setView([42.3702, 21.1483], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(adminMap);
+
+    const porosiState = {};
+    const markera = {};
+
+    function siguroPorosine(id) {
+      if (!porosiState[id]) {
+        porosiState[id] = {
+          id,
+          statusi: 'Aktiv',
+          lat: null,
+          lng: null,
+          perditesuar: '--:--:--'
+        };
+      }
+      return porosiState[id];
+    }
+
+    function vizatoListen() {
+      const ids = Object.keys(porosiState);
+      const box = document.getElementById('listaPorosive');
+      if (!ids.length) {
+        box.innerHTML = '<div class="order-item"><div class="muted">Në pritje të sinjalit...</div></div>';
+        return;
+      }
+
+      box.innerHTML = ids
+        .map((id) => {
+          const p = porosiState[id];
+          const kord =
+            typeof p.lat === 'number' && typeof p.lng === 'number'
+              ? `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`
+              : 'Pa koordinata ende';
+          return `
+            <div class="order-item" onclick="fokuso('${id}')" style="cursor:pointer;">
+              <div class="order-id">${p.id}</div>
+              <div>Statusi: <strong>${p.statusi}</strong></div>
+              <div class="muted">Pozicioni: ${kord}</div>
+              <div class="muted">Përditësuar: ${p.perditesuar}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function fokuso(id) {
+      const p = porosiState[id];
+      if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
+        adminMap.setView([p.lat, p.lng], 15);
+      }
+    }
+
+    // Shënim: nëse server.js transmeton ngjarje globale ose të dhomës, këtu i kapim të dyja formatet
+    socket.on('perditeso-koordinatat', (data) => {
+      if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
+      const id = data.porosia || 'POROSI-LIVE';
+      const p = siguroPorosine(id);
+      p.lat = data.lat;
+      p.lng = data.lng;
+      p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+
+      if (!markera[id]) {
+        markera[id] = L.marker([data.lat, data.lng]).addTo(adminMap).bindPopup(id);
+      } else {
+        markera[id].setLatLng([data.lat, data.lng]);
+      }
+      vizatoListen();
+    });
+
+    socket.on('statusi-ri', (data) => {
+      if (!data) return;
+      if (typeof data === 'string') {
+        const p = siguroPorosine('POROSI-LIVE');
+        p.statusi = data;
+        p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+      } else if (data.porosia) {
+        const p = siguroPorosine(data.porosia);
+        p.statusi = data.statusi || p.statusi;
+        p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+      }
+      vizatoListen();
+    });
+  </script>
+</body>
+</html>
