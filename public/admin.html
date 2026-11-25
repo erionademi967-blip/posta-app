@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Erioni Delivery — Kontrolli Qendror</title>
+  <title>Erioni Delivery — Dispatch Control</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00e5a8" />
+  <meta name="theme-color" content="#0ea5e9" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -17,23 +17,24 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #060911;
+      background: #070b14;
       color: #f8fafc;
+      overflow: hidden;
     }
     header {
       height: 58px;
       padding: 0 18px;
-      background: #0c121e;
+      background: #0c1322;
       border-bottom: 1px solid #1e293b;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
-    .left-hdr {
+    .brand-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
     .brand {
       font-weight: 900;
@@ -42,148 +43,358 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
+      letter-spacing: -0.2px;
     }
-    .dot-live {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #00e5a8;
-      box-shadow: 0 0 10px #00e5a8;
-    }
-    .stats {
-      display: flex;
-      gap: 8px;
+    .logo-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0ea5e9, #10b981);
+      color: #041016;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
       font-size: 12px;
+    }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
       font-weight: 800;
-    }
-    .stat-chip {
-      background: #131c2e;
-      border: 1px solid #24324d;
-      padding: 5px 10px;
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
       border-radius: 999px;
-      color: #cbd5e1;
     }
-    .btn-new {
-      background: linear-gradient(135deg, #00e5a8, #38bdf8);
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .hdr-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-ghost {
+      background: #131d31;
+      color: #cbd5e1;
+      border: 1px solid #24334d;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #10b981);
       color: #041016;
       text-decoration: none;
-      padding: 8px 13px;
+      padding: 8px 14px;
       border-radius: 10px;
       font-weight: 900;
-      font-size: 13px;
+      font-size: 12.5px;
     }
-    .workspace {
+
+    .app-shell {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: 330px 1fr 340px;
       height: calc(100vh - 58px);
     }
-    @media (max-width: 840px) {
-      .workspace {
+    @media (max-width: 1050px) {
+      body { overflow: auto; }
+      .app-shell {
         grid-template-columns: 1fr;
         height: auto;
       }
-      #adminMap { height: 380px; }
+      #adminMap { height: 390px; }
     }
-    .sidebar {
-      background: #090e18;
-      border-right: 1px solid #1e293b;
+
+    .left-panel, .right-panel {
+      background: #0a101d;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-    .search-box {
+    .left-panel { border-right: 1px solid #1e293b; }
+    .right-panel { border-left: 1px solid #1e293b; }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       padding: 12px;
-      border-bottom: 1px solid #1a2436;
+      border-bottom: 1px solid #172236;
     }
-    .search-box input {
-      width: 100%;
+    .kpi {
+      background: #10192b;
+      border: 1px solid #1e293b;
+      border-radius: 11px;
+      padding: 8px 10px;
+    }
+    .kpi-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: #f8fafc;
+    }
+    .kpi-lbl {
+      font-size: 10.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .filter-area {
       padding: 10px 12px;
+      border-bottom: 1px solid #172236;
+    }
+    .search-in {
+      width: 100%;
+      padding: 9px 12px;
       border-radius: 10px;
-      border: 1px solid #24324d;
-      background: #101726;
+      border: 1px solid #24334d;
+      background: #070b14;
       color: #fff;
       font-size: 13px;
+      margin-bottom: 8px;
     }
+    .tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+      background: #10192b;
+      color: #94a3b8;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: rgba(14, 165, 233, 0.16);
+      border-color: #0ea5e9;
+      color: #7dd3fc;
+    }
+
     .task-list {
       padding: 12px;
       overflow-y: auto;
       flex: 1;
     }
-    .task-card {
-      background: #101726;
+    .task-item {
+      background: #10192b;
       border: 1px solid #1e293b;
-      border-left: 4px solid #38bdf8;
-      border-radius: 14px;
-      padding: 13px;
-      margin-bottom: 10px;
+      border-left: 4px solid #0ea5e9;
+      border-radius: 13px;
+      padding: 12px;
+      margin-bottom: 9px;
       cursor: pointer;
-      transition: transform 0.14s ease, border-color 0.14s ease;
+      transition: border-color 0.15s ease, transform 0.15s ease;
     }
-    .task-card:hover {
-      transform: translateY(-2px);
-      border-color: #00e5a8;
+    .task-item:hover {
+      transform: translateY(-1px);
+      border-color: #38bdf8;
     }
-    .task-card.done { border-left-color: #00e5a8; }
-    .task-top {
+    .task-item.selected {
+      background: #14223a;
+      border-color: #38bdf8;
+    }
+    .task-item.done {
+      border-left-color: #10b981;
+    }
+    .item-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
-    .task-id {
+    .item-code {
       font-weight: 900;
-      color: #5ef2c8;
-      font-size: 14px;
-    }
-    .task-status {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.15);
+      font-size: 13.5px;
       color: #7dd3fc;
     }
-    .task-card.done .task-status {
-      background: rgba(0, 229, 168, 0.15);
-      color: #5ef2c8;
+    .item-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.15);
+      color: #7dd3fc;
     }
-    .meta {
-      font-size: 12px;
+    .task-item.done .item-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+    }
+    .item-meta {
+      font-size: 11.5px;
       color: #94a3b8;
       margin-top: 3px;
     }
+
     #adminMap {
       width: 100%;
       height: 100%;
-      min-height: 350px;
+      min-height: 360px;
+    }
+
+    .detail-body {
+      padding: 14px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .detail-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin: 0 0 4px;
+    }
+    .detail-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    .info-card {
+      background: #10192b;
+      border: 1px solid #1e293b;
+      border-radius: 13px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12.5px;
+      padding: 5px 0;
+      border-bottom: 1px solid #182338;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-k { color: #94a3b8; font-weight: 700; }
+    .info-v { color: #f8fafc; font-weight: 800; text-align: right; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .act-btn {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #24334d;
+      background: #131e33;
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .act-btn:hover { border-color: #38bdf8; }
+    .act-btn.green {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+    .toast-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6ee7b7;
+      font-weight: 800;
+      min-height: 16px;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="left-hdr">
-      <a class="brand" href="/"><span class="dot-live"></span> Erioni Delivery</a>
-      <div class="stats">
-        <span class="stat-chip" id="countActive">Aktive: 0</span>
-        <span class="stat-chip" id="countDone">Dorëzuar: 0</span>
-      </div>
+    <div class="brand-group">
+      <a class="brand" href="/">
+        <span class="logo-badge">ED</span>
+        <span>Erioni Delivery</span>
+      </a>
+      <span class="live-pill"><span class="dot"></span> DISPATCH LIVE</span>
     </div>
-    <a class="btn-new" href="/biznesi.html">+ Porosi e Re</a>
+    <div class="hdr-actions">
+      <a class="btn-ghost" href="/biznesi.html">+ Porosi e Re</a>
+      <a class="btn-primary" href="/korrieri.html?porosia=ED-205&lat=42.3702&lng=21.1483&nr=Nr.%2014">Hap Korrierin</a>
+    </div>
   </header>
 
-  <div class="workspace">
-    <aside class="sidebar">
-      <div class="search-box">
-        <input id="searchInput" type="text" placeholder="Kërko kodin e porosisë..." oninput="vizatoListen()" />
+  <div class="app-shell">
+    <aside class="left-panel">
+      <div class="kpi-strip">
+        <div class="kpi">
+          <div class="kpi-val" id="kpiTotal">0</div>
+          <div class="kpi-lbl">Gjithsej</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpiActive" style="color:#7dd3fc;">0</div>
+          <div class="kpi-lbl">Në rrugë</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpiDone" style="color:#6ee7b7;">0</div>
+          <div class="kpi-lbl">Dorëzuar</div>
+        </div>
       </div>
-      <div id="listaPorosive" class="task-list">
-        <div class="task-card" style="cursor:default;">
-          <div class="meta" style="margin-top:0;">Në pritje të sinjalit live nga korrierët...</div>
+
+      <div class="filter-area">
+        <input id="searchBox" class="search-in" type="text" placeholder="Kërko porosinë (p.sh. ED-205)..." oninput="renderList()" />
+        <div class="tabs">
+          <button id="tabAll" class="tab-btn active" onclick="setFilter('all')">Të gjitha</button>
+          <button id="tabActive" class="tab-btn" onclick="setFilter('active')">Aktive</button>
+          <button id="tabDone" class="tab-btn" onclick="setFilter('done')">Dorëzuar</button>
+        </div>
+      </div>
+
+      <div id="taskList" class="task-list">
+        <div class="task-item" style="cursor:default;">
+          <div class="item-meta" style="margin-top:0;">Në pritje të porosive dhe sinjalit GPS...</div>
         </div>
       </div>
     </aside>
-    <div id="adminMap"></div>
+
+    <main id="adminMap"></main>
+
+    <aside class="right-panel">
+      <div id="detailPanel" class="detail-body">
+        <h2 class="detail-title">Detajet e Dërgesës</h2>
+        <div class="detail-sub">Zgjidh një porosi nga lista ose kliko në hartë për të parë detajet live.</div>
+
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-k">Kodi</span>
+            <span class="info-v" id="detId">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-k">Statusi</span>
+            <span class="info-v" id="detStatus">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-k">Koordinatat</span>
+            <span class="info-v" id="detCoords">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-k">Përditësuar</span>
+            <span class="info-v" id="detTime">--</span>
+          </div>
+        </div>
+
+        <div class="action-grid">
+          <button class="act-btn" onclick="focusSelected()">Fokuso në Hartë</button>
+          <button class="act-btn" onclick="copyClientLink()">Kopjo Link Klienti</button>
+          <button class="act-btn" onclick="sendStatusSelected('Rrugës drejt klientit')">Vë në Rrugë</button>
+          <button class="act-btn green" onclick="sendStatusSelected('Dorëzuar me sukses')">Shëno Dorëzuar</button>
+        </div>
+
+        <div id="detNote" class="toast-note"></div>
+      </div>
+    </aside>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -191,16 +402,19 @@
   <script>
     const socket = io();
     const adminMap = L.map('adminMap').setView([42.3702, 21.1483], 13);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(adminMap);
 
-    const porosiState = {};
-    const markera = {};
+    const tasks = {};
+    const markers = {};
+    let selectedId = null;
+    let currentFilter = 'all';
 
-    function siguroPorosine(id) {
-      if (!porosiState[id]) {
-        porosiState[id] = {
+    function ensureTask(id) {
+      if (!tasks[id]) {
+        tasks[id] = {
           id,
           statusi: 'Në pritje',
           lat: null,
@@ -208,86 +422,149 @@
           perditesuar: '--:--:--'
         };
       }
-      return porosiState[id];
+      if (!selectedId) selectedId = id;
+      return tasks[id];
     }
 
-    function perditesoNumrat() {
-      const items = Object.values(porosiState);
-      const done = items.filter((x) => (x.statusi || '').toLowerCase().includes('dorëz')).length;
-      const active = items.length - done;
-      document.getElementById('countActive').innerText = `Aktive: ${active}`;
-      document.getElementById('countDone').innerText = `Dorëzuar: ${done}`;
+    function setFilter(f) {
+      currentFilter = f;
+      document.getElementById('tabAll').classList.toggle('active', f === 'all');
+      document.getElementById('tabActive').classList.toggle('active', f === 'active');
+      document.getElementById('tabDone').classList.toggle('active', f === 'done');
+      renderList();
     }
 
-    function vizatoListen() {
-      const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-      const ids = Object.keys(porosiState).filter((id) => id.toLowerCase().includes(q));
-      const box = document.getElementById('listaPorosive');
+    function isDoneStatus(st) {
+      return (st || '').toLowerCase().includes('dorëz');
+    }
 
+    function updateKpis() {
+      const list = Object.values(tasks);
+      const done = list.filter((t) => isDoneStatus(t.statusi)).length;
+      document.getElementById('kpiTotal').innerText = list.length;
+      document.getElementById('kpiDone').innerText = done;
+      document.getElementById('kpiActive').innerText = Math.max(0, list.length - done);
+    }
+
+    function renderDetail() {
+      const t = selectedId ? tasks[selectedId] : null;
+      if (!t) return;
+
+      document.getElementById('detId').innerText = t.id;
+      document.getElementById('detStatus').innerText = t.statusi;
+      document.getElementById('detCoords').innerText =
+        typeof t.lat === 'number' && typeof t.lng === 'number'
+          ? `${t.lat.toFixed(5)}, ${t.lng.toFixed(5)}`
+          : 'Pa sinjal GPS';
+      document.getElementById('detTime').innerText = t.perditesuar;
+    }
+
+    function renderList() {
+      const q = (document.getElementById('searchBox').value || '').trim().toLowerCase();
+      const ids = Object.keys(tasks).filter((id) => {
+        const t = tasks[id];
+        const matchSearch = id.toLowerCase().includes(q) || (t.statusi || '').toLowerCase().includes(q);
+        if (!matchSearch) return false;
+        if (currentFilter === 'done') return isDoneStatus(t.statusi);
+        if (currentFilter === 'active') return !isDoneStatus(t.statusi);
+        return true;
+      });
+
+      const container = document.getElementById('taskList');
       if (!ids.length) {
-        box.innerHTML = '<div class="task-card" style="cursor:default;"><div class="meta" style="margin-top:0;">Nuk ka porosi që përputhen.</div></div>';
+        container.innerHTML = '<div class="task-item" style="cursor:default;"><div class="item-meta" style="margin-top:0;">Nuk ka porosi në këtë filtër.</div></div>';
+        updateKpis();
         return;
       }
 
-      box.innerHTML = ids
+      container.innerHTML = ids
         .map((id) => {
-          const p = porosiState[id];
-          const isDone = (p.statusi || '').toLowerCase().includes('dorëz');
-          const kord =
-            typeof p.lat === 'number' && typeof p.lng === 'number'
-              ? `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`
-              : 'Pa koordinata GPS ende';
+          const t = tasks[id];
+          const done = isDoneStatus(t.statusi);
+          const sel = id === selectedId;
+          const coordsText =
+            typeof t.lat === 'number' && typeof t.lng === 'number'
+              ? `${t.lat.toFixed(4)}, ${t.lng.toFixed(4)}`
+              : 'Në pritje të GPS';
           return `
-            <div class="task-card ${isDone ? 'done' : ''}" onclick="fokuso('${id}')">
-              <div class="task-top">
-                <span class="task-id">${p.id}</span>
-                <span class="task-status">${p.statusi}</span>
+            <div class="task-item ${done ? 'done' : ''} ${sel ? 'selected' : ''}" onclick="selectTask('${id}')">
+              <div class="item-top">
+                <span class="item-code">${t.id}</span>
+                <span class="item-badge">${t.statusi}</span>
               </div>
-              <div class="meta">GPS: ${kord}</div>
-              <div class="meta">Përditësuar: ${p.perditesuar}</div>
+              <div class="item-meta">GPS: ${coordsText}</div>
+              <div class="item-meta">Ora: ${t.perditesuar}</div>
             </div>
           `;
         })
         .join('');
 
-      perditesoNumrat();
+      updateKpis();
+      renderDetail();
     }
 
-    function fokuso(id) {
-      const p = porosiState[id];
-      if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
-        adminMap.setView([p.lat, p.lng], 15);
+    function selectTask(id) {
+      selectedId = id;
+      renderList();
+      focusSelected();
+    }
+
+    function focusSelected() {
+      const t = selectedId ? tasks[selectedId] : null;
+      if (t && typeof t.lat === 'number' && typeof t.lng === 'number') {
+        adminMap.setView([t.lat, t.lng], 15);
       }
+    }
+
+    function copyClientLink() {
+      const t = selectedId ? tasks[selectedId] : null;
+      if (!t) return;
+      const lat = typeof t.lat === 'number' ? t.lat : 42.3702;
+      const lng = typeof t.lng === 'number' ? t.lng : 21.1483;
+      const url = `${window.location.origin}/klienti.html?porosia=${encodeURIComponent(t.id)}&lat=${lat}&lng=${lng}`;
+      navigator.clipboard.writeText(url).then(() => {
+        document.getElementById('detNote').innerText = 'Linku i klientit u kopjua!';
+      });
+    }
+
+    function sendStatusSelected(statusi) {
+      if (!selectedId) return;
+      socket.emit('ndrysho-statusin', { porosia: selectedId, statusi });
+      const t = ensureTask(selectedId);
+      t.statusi = statusi;
+      t.perditesuar = new Date().toLocaleTimeString('sq-AL');
+      document.getElementById('detNote').innerText = `Statusi u dërgua: ${statusi}`;
+      renderList();
     }
 
     socket.on('perditeso-koordinatat', (data) => {
       if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
-      const id = data.porosia || 'ED-LIVE';
-      const p = siguroPorosine(id);
-      p.lat = data.lat;
-      p.lng = data.lng;
-      p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+      const id = data.porosia || 'ED-205';
+      const t = ensureTask(id);
+      t.lat = data.lat;
+      t.lng = data.lng;
+      t.perditesuar = new Date().toLocaleTimeString('sq-AL');
 
-      if (!markera[id]) {
-        markera[id] = L.marker([data.lat, data.lng]).addTo(adminMap).bindPopup(`${id} (${p.statusi})`);
+      if (!markers[id]) {
+        markers[id] = L.marker([data.lat, data.lng]).addTo(adminMap).bindPopup(`${id}`);
       } else {
-        markera[id].setLatLng([data.lat, data.lng]);
+        markers[id].setLatLng([data.lat, data.lng]);
       }
-      vizatoListen();
+      renderList();
     });
 
     socket.on('statusi-ri', (data) => {
       if (!data) return;
       if (typeof data === 'string') {
-        const p = siguroPorosine('ED-LIVE');
-        p.statusi = data;
-        p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+        const t = ensureTask(selectedId || 'ED-205');
+        t.statusi = data;
+        t.perditesuar = new Date().toLocaleTimeString('sq-AL');
       } else if (data.porosia) {
-        const p = siguroPorosine(data.porosia);
-        p.statusi = data.statusi || p.statusi;
-        p.perditesuar = new Date().toLocaleTimeString('sq-AL');
+        const t = ensureTask(data.porosia);
+        t.statusi = data.statusi || t.statusi;
+        t.perditesuar = new Date().toLocaleTimeString('sq-AL');
       }
-      vizatoListen();
+      renderList();
     });
   </script>
 </body>
