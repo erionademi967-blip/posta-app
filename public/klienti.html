@@ -9,13 +9,14 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #111827;
-      color: #ffffff;
+      background: #111;
+      color: #fff;
+      text-align: center;
     }
     .top-bar {
-      padding: 12px 16px;
-      background: #1f2937;
-      text-align: center;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
     }
     #statusi {
       font-size: 16px;
@@ -24,10 +25,32 @@
     }
     #eta {
       font-size: 14px;
-      color: #d1d5db;
+      color: #00cec9;
+      margin-bottom: 6px;
+    }
+    .progres-box {
+      width: 90%;
+      max-width: 700px;
+      margin: 6px auto;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+      border: 1px solid #444;
+    }
+    .progres-bar {
+      height: 100%;
+      width: 0%;
+      background: #00b894;
+      transition: width 0.4s ease;
+    }
+    #progresTekst {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #00b894;
     }
     #map {
-      height: calc(100vh - 70px);
+      height: calc(100vh - 115px);
       width: 100%;
     }
   </style>
@@ -36,16 +59,24 @@
   <div class="top-bar">
     <div id="statusi">Statusi: Në pritje të korrierit...</div>
     <div id="eta">Distanca: -- km | Arrin për rreth: -- min</div>
+    <div class="progres-box">
+      <div id="progresBar" class="progres-bar"></div>
+    </div>
+    <p id="progresTekst">Progresi i rrugës: 0%</p>
   </div>
+
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    const params = new URLSearchParams(window.location.search);
+    const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
 
     const klientLat = 42.3702;
     const klientLng = 21.1483;
+    let distancaFillestareKm = null;
 
     const map = L.map('map').setView([klientLat, klientLng], 15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -55,26 +86,26 @@
     L.marker([klientLat, klientLng]).addTo(map).bindPopup('Adresa e Klientit').openPopup();
     const korrierMarker = L.marker([klientLat, klientLng]).addTo(map).bindPopup('Korrieri');
 
-    const vijaRruges = L.polyline([[klientLat, klientLng], [klientLat, klientLng]], {
-      color: '#2563eb',
+    const vijadruges = L.polyline([[klientLat, klientLng], [klientLat, klientLng]], {
+      color: '#0984e3',
       weight: 4,
       opacity: 0.85
     }).addTo(map);
 
-    function llogaritMinutat(lat1, lon1, lat2, lon2) {
+    function llogaritMinutat(lat1, lng1, lat2, lng2) {
       const R = 6371;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
-      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const dLng = ((lng2 - lng1) * Math.PI) / 180;
       const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos((lat1 * Math.PI) / 180) *
           Math.cos((lat2 * Math.PI) / 180) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const distancaKm = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-      const shpejtesiaMesatare = 30;
-      const minuta = Math.max(1, Math.round((distancaKm / shpejtesiaMesatare) * 60));
-      return { distancaKm: distancaKm.toFixed(2), minuta };
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distancaKm = R * c * 1.25;
+      const minuta = Math.max(1, Math.round((distancaKm / 30) * 60));
+      return { distancaKm, minuta };
     }
 
     async function perditesoRrugen(lat1, lng1, lat2, lng2) {
@@ -85,35 +116,49 @@
 
         if (data.routes && data.routes[0] && data.routes[0].geometry) {
           const pika = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-          vijaRruges.setLatLngs(pika);
+          vijadruges.setLatLngs(pika);
+
+          const distKm = data.routes[0].distance / 1000;
+          const minRruge = Math.max(1, Math.round(data.routes[0].duration / 60));
+
+          if (distancaFillestareKm === null || distKm > distancaFillestareKm) {
+            distancaFillestareKm = distKm;
+          }
+
+          const progres = Math.max(
+            0,
+            Math.min(100, Math.round(((distancaFillestareKm - distKm) / distancaFillestareKm) * 100))
+          );
+
+          document.getElementById('eta').innerText =
+            `Distanca: ${distKm.toFixed(2)} km | Arrin për rreth: ${minRruge} min`;
+          document.getElementById('progresBar').style.width = `${progres}%`;
+          document.getElementById('progresTekst').innerText = `Progresi i rrugës: ${progres}%`;
           return;
         }
       } catch (err) {
         console.warn('Gabim te rruga OSRM, përdoret vijë e drejtë:', err);
       }
 
-      vijaRruges.setLatLngs([[lat1, lng1], [lat2, lng2]]);
+      vijadruges.setLatLngs([[lat1, lng1], [lat2, lng2]]);
+      const info = llogaritMinutat(lat1, lng1, lat2, lng2);
+      document.getElementById('eta').innerText =
+        `Distanca: ${info.distancaKm.toFixed(2)} km | Arrin për rreth: ${info.minuta} min`;
     }
-const params = new URLSearchParams(window.location.search);
-const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
+
     socket.on('connect', () => {
-      console.log('Klienti u lidh me serverin:', socket.id);
-    socket.emit('bashkohu-porosise', porosiaId);});
+      console.log('Klienti u lidh me serverin:', socket.id, 'për porosinë:', porosiaId);
+      socket.emit('bashkohu-porosise', porosiaId);
+    });
 
     socket.on('perditeso-koordinatat', (data) => {
-      console.log('Koordinatat e marra:', data);
       if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
-
       korrierMarker.setLatLng([data.lat, data.lng]);
       map.panTo([data.lat, data.lng]);
       perditesoRrugen(data.lat, data.lng, klientLat, klientLng);
-
-      const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
-      document.getElementById('eta').innerText = `Distanca: ${info.distancaKm} km | Arrin per rreth: ${info.minuta} min`;
     });
 
     socket.on('statusi-ri', (statusi) => {
-      console.log('Statusi i ri:', statusi);
       document.getElementById('statusi').innerText = `Statusi: ${statusi}`;
     });
   </script>
