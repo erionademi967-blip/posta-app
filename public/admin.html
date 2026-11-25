@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Erioni Delivery — Dispatch Control</title>
+  <title>Erioni Delivery — Kontrolli Qendror</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#38bdf8" />
+  <meta name="theme-color" content="#00e5a8" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -17,13 +17,13 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #070a10;
+      background: #060911;
       color: #f8fafc;
     }
     header {
       height: 58px;
       padding: 0 18px;
-      background: #0c121d;
+      background: #0c121e;
       border-bottom: 1px solid #1e293b;
       display: flex;
       align-items: center;
@@ -48,14 +48,14 @@
       width: 9px;
       height: 9px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 10px #10b981;
+      background: #00e5a8;
+      box-shadow: 0 0 10px #00e5a8;
     }
     .stats {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
     }
     .stat-chip {
       background: #131c2e;
@@ -65,12 +65,12 @@
       color: #cbd5e1;
     }
     .btn-new {
-      background: linear-gradient(135deg, #0ea5e9, #10b981);
+      background: linear-gradient(135deg, #00e5a8, #38bdf8);
       color: #041016;
       text-decoration: none;
       padding: 8px 13px;
       border-radius: 10px;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 13px;
     }
     .workspace {
@@ -86,7 +86,7 @@
       #adminMap { height: 380px; }
     }
     .sidebar {
-      background: #0a0f18;
+      background: #090e18;
       border-right: 1px solid #1e293b;
       display: flex;
       flex-direction: column;
@@ -101,7 +101,7 @@
       padding: 10px 12px;
       border-radius: 10px;
       border: 1px solid #24324d;
-      background: #111827;
+      background: #101726;
       color: #fff;
       font-size: 13px;
     }
@@ -111,8 +111,8 @@
       flex: 1;
     }
     .task-card {
-      background: #111827;
-      border: 1px solid #1f2b40;
+      background: #101726;
+      border: 1px solid #1e293b;
       border-left: 4px solid #38bdf8;
       border-radius: 14px;
       padding: 13px;
@@ -122,11 +122,9 @@
     }
     .task-card:hover {
       transform: translateY(-2px);
-      border-color: #38bdf8;
+      border-color: #00e5a8;
     }
-    .task-card.done {
-      border-left-color: #10b981;
-    }
+    .task-card.done { border-left-color: #00e5a8; }
     .task-top {
       display: flex;
       justify-content: space-between;
@@ -135,7 +133,7 @@
     }
     .task-id {
       font-weight: 900;
-      color: #7dd3fc;
+      color: #5ef2c8;
       font-size: 14px;
     }
     .task-status {
@@ -147,8 +145,8 @@
       color: #7dd3fc;
     }
     .task-card.done .task-status {
-      background: rgba(16, 185, 129, 0.16);
-      color: #6ee7b7;
+      background: rgba(0, 229, 168, 0.15);
+      color: #5ef2c8;
     }
     .meta {
       font-size: 12px;
@@ -171,7 +169,7 @@
         <span class="stat-chip" id="countDone">Dorëzuar: 0</span>
       </div>
     </div>
-    <a class="btn-new" href="/biznesi.html">+ Krijo Porosi</a>
+    <a class="btn-new" href="/biznesi.html">+ Porosi e Re</a>
   </header>
 
   <div class="workspace">
@@ -193,7 +191,7 @@
   <script>
     const socket = io();
     const adminMap = L.map('adminMap').setView([42.3702, 21.1483], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19
     }).addTo(adminMap);
 
