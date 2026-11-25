@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paneli i Biznesit / Postës</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px 14px;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+    }
+    .card {
+      max-width: 560px;
+      margin: 0 auto;
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 22px;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+    p.sub {
+      color: #bbb;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    input {
+      padding: 10px 12px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+      width: 210px;
+    }
+    button {
+      padding: 10px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+      background: #0984e3;
+    }
+    button.gen {
+      background: #6c5ce7;
+    }
+    button.copy {
+      background: #00b894;
+    }
+    button.open {
+      background: #e17055;
+    }
+    .box {
+      background: #121212;
+      border: 1px solid #2e2e2e;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 12px;
+      text-align: left;
+    }
+    .label {
+      font-size: 13px;
+      color: #00cec9;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .link-text {
+      word-break: break-all;
+      font-size: 13px;
+      color: #eee;
+      background: #1d1d1d;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .toast {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #00b894;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Paneli i Biznesit</h1>
+    <p class="sub">Krijo ose zgjidh një kod porosie për të gjeneruar linket e gjurmimit.</p>
+
+    <div class="row">
+      <input id="kodiInput" type="text" value="KS-102" placeholder="p.sh. KS-102" />
+      <button class="gen" onclick="gjeneroKod()">Gjenero Kod</button>
+      <button onclick="perditesoLinket()">Përditëso Linket</button>
+    </div>
+
+    <div class="box">
+      <div class="label">Linku për Klientin</div>
+      <div id="linkKlienti" class="link-text"></div>
+      <div class="actions">
+        <button class="copy" onclick="kopjo('linkKlienti')">Kopjo Linkun</button>
+        <button class="open" onclick="hap('linkKlienti')">Hap Klientin</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="label">Linku për Korrierin</div>
+      <div id="linkKorrieri" class="link-text"></div>
+      <div class="actions">
+        <button class="copy" onclick="kopjo('linkKorrieri')">Kopjo Linkun</button>
+        <button class="open" onclick="hap('linkKorrieri')">Hap Korrierin</button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script>
+    function merrKodin() {
+      const val = document.getElementById('kodiInput').value.trim();
+      return val || 'KS-101';
+    }
+
+    function gjeneroKod() {
+      const numri = Math.floor(100 + Math.random() * 900);
+      document.getElementById('kodiInput').value = `KS-${numri}`;
+      perditesoLinket();
+    }
+
+    function perditesoLinket() {
+      const kodi = encodeURIComponent(merrKodin());
+      const base = window.location.origin;
+      document.getElementById('linkKlienti').innerText = `${base}/klienti.html?porosia=${kodi}`;
+      document.getElementById('linkKorrieri').innerText = `${base}/korrieri.html?porosia=${kodi}`;
+    }
+
+    function kopjo(elementId) {
+      const teksti = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(teksti).then(() => {
+        document.getElementById('toast').innerText = 'Linku u kopjua!';
+        setTimeout(() => {
+          document.getElementById('toast').innerText = '';
+        }, 2000);
+      });
+    }
+
+    function hap(elementId) {
+      const url = document.getElementById(elementId).innerText;
+      window.open(url, '_blank');
+    }
+
+    perditesoLinket();
+  </script>
+</body>
+</html>
