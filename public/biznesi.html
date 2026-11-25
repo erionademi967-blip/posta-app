@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Paneli i Biznesit / Postës</title>
+  <title>Erioni Delivery — Porosi e Re</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00d2a0" />
+  <meta name="theme-color" content="#38bdf8" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -19,20 +19,19 @@
       padding: 20px 14px 40px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background:
-        radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.14), transparent 40%),
-        radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.16), transparent 42%),
-        #0b0e14;
+        radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.15), transparent 40%),
+        radial-gradient(circle at 88% 15%, rgba(16, 185, 129, 0.14), transparent 42%),
+        #070a10;
       color: #f8fafc;
-      text-align: center;
     }
     .card {
-      max-width: 660px;
+      max-width: 700px;
       margin: 0 auto;
-      background: #131822;
-      border: 1px solid #222b3d;
-      border-radius: 18px;
+      background: #0e1420;
+      border: 1px solid #1e293b;
+      border-radius: 20px;
       padding: 22px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.5);
     }
     .top-nav {
       display: flex;
@@ -42,130 +41,168 @@
       font-size: 13px;
     }
     .top-nav a {
-      color: #6ee7b7;
+      color: #7dd3fc;
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 800;
     }
     h1 {
       margin: 0 0 6px;
       font-size: 24px;
+      letter-spacing: -0.3px;
     }
     p.sub {
       color: #94a3b8;
-      font-size: 14px;
+      font-size: 13.5px;
       margin: 0 0 18px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
-    .row {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       margin-bottom: 12px;
     }
+    @media (max-width: 560px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    .field label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #94a3b8;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
     input {
+      width: 100%;
       padding: 11px 13px;
-      font-size: 15px;
+      font-size: 14.5px;
       border-radius: 11px;
-      border: 1px solid #2b364d;
-      background: #0c1018;
+      border: 1px solid #24324d;
+      background: #090d15;
       color: #fff;
-      width: 220px;
-    }
-    button {
-      padding: 11px 15px;
-      font-size: 14px;
-      font-weight: 700;
-      border: none;
-      border-radius: 11px;
-      cursor: pointer;
-      color: #fff;
-      background: #2563eb;
-    }
-    button.green {
-      background: #10b981;
-      color: #05130e;
-    }
-    button.gray {
-      background: #252f42;
     }
     .hint {
       font-size: 12px;
-      color: #67e8f9;
-      margin: 10px 0 6px;
-      font-weight: 600;
+      color: #6ee7b7;
+      margin: 10px 0 7px;
+      font-weight: 700;
     }
     #pickerMap {
-      height: 270px;
+      height: 280px;
       width: 100%;
       border-radius: 14px;
-      border: 1px solid #283348;
+      border: 1px solid #24324d;
       margin-bottom: 14px;
       cursor: crosshair;
     }
+    .btn-green {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14.5px;
+      font-weight: 900;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #10b981);
+      color: #041016;
+      margin-bottom: 8px;
+    }
     .link-box {
-      background: #0e131c;
-      border: 1px solid #222b3d;
+      background: #090d15;
+      border: 1px solid #1e293b;
       border-radius: 14px;
       padding: 13px;
       margin-top: 12px;
-      text-align: left;
       word-break: break-all;
       font-size: 13px;
     }
     .label {
-      color: #67e8f9;
+      color: #7dd3fc;
       font-weight: 800;
       margin-bottom: 6px;
       display: block;
     }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    button.act {
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      background: #2563eb;
+    }
+    button.gray { background: #1e293b; }
     .msg {
       margin-top: 12px;
       color: #6ee7b7;
       font-size: 13px;
       min-height: 18px;
       font-weight: 700;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top-nav">
-      <a href="/">← Kryefaqja</a>
-      <a href="/admin.html">Kontrolli Qendror →</a>
+      <a href="/">← Erioni Delivery</a>
+      <a href="/admin.html">Dispatch Control →</a>
     </div>
 
-    <h1>Paneli i Biznesit / Postës</h1>
-    <p class="sub">Shkruaj kodin e porosisë dhe kliko mbi hartë për të caktuar pikën e klientit.</p>
+    <h1>Porosi e Re — Erioni Delivery</h1>
+    <p class="sub">Plotëso kodin, numrin e shtëpisë/ndërtesës dhe kliko mbi hartë për pikën e saktë të klientit.</p>
 
-    <div class="row">
-      <input id="porosiaInput" type="text" placeholder="p.sh. KS-105" value="KS-105" />
-      <button class="green" onclick="perditesoLinket()">Përditëso Linket</button>
+    <div class="form-grid">
+      <div class="field">
+        <label>Kodi i Porosisë</label>
+        <input id="porosiaInput" type="text" placeholder="p.sh. ED-205" value="ED-205" oninput="perditesoLinket()" />
+      </div>
+      <div class="field">
+        <label>Nr. Shtëpisë / Detaj Adrese</label>
+        <input id="nrInput" type="text" placeholder="p.sh. Nr. 14, Kati 3" value="Nr. 14" oninput="perditesoLinket()" />
+      </div>
     </div>
 
-    <div class="hint">Kliko në hartë për të vendosur destinacionin e klientit:</div>
+    <div class="hint">Kliko mbi hartë për të vendosur destinacionin e klientit:</div>
     <div id="pickerMap"></div>
 
-    <div class="row">
-      <input id="latInput" type="text" placeholder="Lat p.sh. 42.3702" value="42.3702" oninput="sinkronizoNgaInput()" />
-      <input id="lngInput" type="text" placeholder="Lng p.sh. 21.1483" value="21.1483" oninput="sinkronizoNgaInput()" />
+    <div class="form-grid">
+      <div class="field">
+        <label>Gjerësia (Lat)</label>
+        <input id="latInput" type="text" value="42.3702" oninput="sinkronizoNgaInput()" />
+      </div>
+      <div class="field">
+        <label>Gjatësia (Lng)</label>
+        <input id="lngInput" type="text" value="21.1483" oninput="sinkronizoNgaInput()" />
+      </div>
     </div>
+
+    <button class="btn-green" onclick="perditesoLinket('Linket e porosisë u gjeneruan me sukses!')">Gjenero / Përditëso Linket</button>
 
     <div class="link-box">
       <span class="label">Linku për Klientin:</span>
       <div id="linkKlienti"></div>
-      <div class="row" style="margin-top:10px; margin-bottom:0; justify-content:flex-start;">
-        <button onclick="kopjo('klient')">Kopjo Linkun</button>
-        <button class="gray" onclick="hap('klient')">Hap Klientin</button>
+      <div class="row">
+        <button class="act" onclick="kopjo('klient')">Kopjo Linkun</button>
+        <button class="act gray" onclick="hap('klient')">Hap Klientin</button>
       </div>
     </div>
 
     <div class="link-box">
       <span class="label">Linku për Korrierin:</span>
       <div id="linkKorrieri"></div>
-      <div class="row" style="margin-top:10px; margin-bottom:0; justify-content:flex-start;">
-        <button onclick="kopjo('korrier')">Kopjo Linkun</button>
-        <button class="gray" onclick="hap('korrier')">Hap Korrierin</button>
+      <div class="row">
+        <button class="act" onclick="kopjo('korrier')">Kopjo Linkun</button>
+        <button class="act gray" onclick="hap('korrier')">Hap Korrierin</button>
       </div>
     </div>
 
@@ -185,12 +222,15 @@
 
     let klientPickerMarker = L.marker([initialLat, initialLng])
       .addTo(pickerMap)
-      .bindPopup('Pika e klientit')
+      .bindPopup('Destinacioni i klientit')
       .openPopup();
 
     function getKodi() {
-      const val = document.getElementById('porosiaInput').value.trim();
-      return val || 'KS-101';
+      return (document.getElementById('porosiaInput').value || '').trim() || 'ED-201';
+    }
+
+    function getNr() {
+      return (document.getElementById('nrInput').value || '').trim();
     }
 
     function getKoordinatat() {
@@ -204,22 +244,24 @@
 
     function perditesoLinket(mesazh = 'Linket u përditësuan.') {
       const kodi = encodeURIComponent(getKodi());
+      const nr = encodeURIComponent(getNr());
       const { lat, lng } = getKoordinatat();
+      const extraNr = nr ? `&nr=${nr}` : '';
+
       document.getElementById('linkKlienti').innerText =
-        `${baseUrl}/klienti.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
+        `${baseUrl}/klienti.html?porosia=${kodi}&lat=${lat}&lng=${lng}${extraNr}`;
       document.getElementById('linkKorrieri').innerText =
-        `${baseUrl}/korrieri.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
+        `${baseUrl}/korrieri.html?porosia=${kodi}&lat=${lat}&lng=${lng}${extraNr}`;
       document.getElementById('mesazhi').innerText = mesazh;
     }
 
     pickerMap.on('click', (e) => {
       const lat = Number(e.latlng.lat.toFixed(6));
       const lng = Number(e.latlng.lng.toFixed(6));
-
       document.getElementById('latInput').value = lat;
       document.getElementById('lngInput').value = lng;
       klientPickerMarker.setLatLng([lat, lng]);
-      perditesoLinket(`Pika u zgjodh në hartë (${lat}, ${lng}). Linket u përditësuan.`);
+      perditesoLinket(`Pika u caktua në hartë (${lat}, ${lng}).`);
     });
 
     function sinkronizoNgaInput() {
@@ -236,7 +278,7 @@
           : document.getElementById('linkKorrieri').innerText;
 
       navigator.clipboard.writeText(teksti).then(() => {
-        document.getElementById('mesazhi').innerText = 'Linku u kopjua në clipboard!';
+        document.getElementById('mesazhi').innerText = 'Linku u kopjua!';
       });
     }
 
