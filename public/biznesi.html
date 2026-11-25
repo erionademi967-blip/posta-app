@@ -107,6 +107,8 @@
 
     <div class="row">
       <input id="kodiInput" type="text" value="KS-102" placeholder="p.sh. KS-102" />
+      <input id="latInput" type="number" step="any" value="42.3702" placeholder="Lat (p.sh. 42.3702)" />
+      <input id="lngInput" type="number" step="any" value="21.1483" placeholder="Lng (p.sh. 21.1483)" />
       <button class="gen" onclick="gjeneroKod()">Gjenero Kod</button>
       <button onclick="perditesoLinket()">Përditëso Linket</button>
     </div>
@@ -145,12 +147,19 @@
     }
 
     function perditesoLinket() {
-      const kodi = encodeURIComponent(merrKodin());
-      const base = window.location.origin;
-      document.getElementById('linkKlienti').innerText = `${base}/klienti.html?porosia=${kodi}`;
-      document.getElementById('linkKorrieri').innerText = `${base}/korrieri.html?porosia=${kodi}`;
+    const kodi = encodeURIComponent(merrKodin());
+    const latVal = parseFloat(document.getElementById('latInput').value);
+    const lngVal = parseFloat(document.getElementById('lngInput').value);
+    const base = window.location.origin;
+
+    let klientUrl = `${base}/klienti.html?porosia=${kodi}`;
+    if (!Number.isNaN(latVal) && !Number.isNaN(lngVal)) {
+      klientUrl += `&lat=${encodeURIComponent(latVal)}&lng=${encodeURIComponent(lngVal)}`;
     }
 
+    document.getElementById('linkKlienti').innerText = klientUrl;
+    document.getElementById('linkKorrieri').innerText = `${base}/korrieri.html?porosia=${kodi}`;
+  }
     function kopjo(elementId) {
       const teksti = document.getElementById(elementId).innerText;
       navigator.clipboard.writeText(teksti).then(() => {
