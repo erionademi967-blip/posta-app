@@ -33,7 +33,7 @@
 
     L.marker([klientLat, klientLng]).addTo(map).bindPopup("Adresa e Klientit").openPopup();
     const korrierMarker = L.marker([klientLat, klientLng]).addTo(map).bindPopup("Korrieri");
-
+const vijaRruges = L.polyline([[klientLat, klientLng], [klientLat, klientLng]], { color: '#2563eb', weight: 4, opacity: 0.85 }).addTo(map);
     function llogaritMinutat(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -60,7 +60,7 @@
 
       korrierMarker.setLatLng([data.lat, data.lng]);
       map.panTo([data.lat, data.lng]);
-
+vijaRruges.setLatLngs([[data.lat, data.lng], [klientLat, klientLng]]);
       const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
       document.getElementById('eta').innerText = `Distanca: ${info.distancaKm} km | Arrin për rreth: ${info.minuta} min`;
     });
