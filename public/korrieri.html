@@ -6,7 +6,7 @@
   <title>Korrieri — Rruga e Dërgesës</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00b894" />
+  <meta name="theme-color" content="#00d2a0" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -17,13 +17,13 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #0d1017;
-      color: #f4f6fb;
+      background: #0b0e14;
+      color: #f8fafc;
     }
     .panel {
-      padding: 12px;
-      background: #151b26;
-      border-bottom: 1px solid #263145;
+      padding: 12px 14px;
+      background: #121722;
+      border-bottom: 1px solid #222b3d;
     }
     .top-row {
       display: flex;
@@ -31,21 +31,21 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .badge {
-      background: rgba(0, 210, 160, 0.16);
-      color: #5ef2c8;
-      border: 1px solid rgba(0, 210, 160, 0.35);
-      padding: 5px 10px;
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 5px 11px;
       border-radius: 999px;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13px;
     }
     .route-info {
       font-size: 13px;
       color: #67e8f9;
-      font-weight: 600;
+      font-weight: 700;
     }
     .btns {
       display: grid;
@@ -61,24 +61,27 @@
     button {
       padding: 11px 8px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       border: none;
-      border-radius: 10px;
+      border-radius: 11px;
       cursor: pointer;
       color: #fff;
       background: #2563eb;
     }
-    button.green { background: #059669; }
+    button.green {
+      background: #10b981;
+      color: #05130e;
+    }
     button.red { background: #dc2626; }
-    button.dark { background: #2a3447; }
+    button.dark { background: #252f42; }
     #info {
       margin-top: 8px;
       font-size: 12px;
-      color: #b5c2d6;
-      line-height: 1.4;
+      color: #94a3b8;
+      line-height: 1.45;
     }
     #map {
-      height: calc(100vh - 185px);
+      height: calc(100vh - 188px);
       min-height: 320px;
       width: 100%;
     }
@@ -87,7 +90,7 @@
 <body>
   <div class="panel">
     <div class="top-row">
-      <span id="porosiBadge" class="badge">Porosia: KS-103</span>
+      <span id="porosiBadge" class="badge">Porosia: KS-105</span>
       <span id="routeSummary" class="route-info">Rruga: -- km • -- min</span>
     </div>
 
