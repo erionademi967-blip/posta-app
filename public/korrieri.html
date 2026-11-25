@@ -3,70 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Paneli i Korrierit</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 24px 14px;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-    }
-    .card {
-      max-width: 520px;
-      margin: 0 auto;
-      background: #1b1b1b;
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 22px;
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 22px;
-    }
-    .porosi-badge {
-      display: inline-block;
-      background: #242424;
-      border: 1px solid #444;
-      color: #00cec9;
-      padding: 6px 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-weight: bold;
-    }
-    .row {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    button {
-      padding: 11px 15px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #fff;
-      background: #0984e3;
-    }
-    button.green {
-      background: #00b894;
-    }
-    button.orange {
-      background: #e17055;
-    }
-    button.gray {
-      background: #444;
-    }
-    #info {
-      margin-top: 14px;
-      font-size: 14px;
-      color: #ccc;
-      line-height: 1.5;
-    }
-  </style>
+  <title>Korrieri — Rruga e Dërgesës</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#00b894" />
   <script>
@@ -74,51 +12,172 @@
       navigator.serviceWorker.register('/sw.js');
     }
   </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #0d1017;
+      color: #f4f6fb;
+    }
+    .panel {
+      padding: 12px;
+      background: #151b26;
+      border-bottom: 1px solid #263145;
+    }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .badge {
+      background: rgba(0, 210, 160, 0.16);
+      color: #5ef2c8;
+      border: 1px solid rgba(0, 210, 160, 0.35);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .route-info {
+      font-size: 13px;
+      color: #67e8f9;
+      font-weight: 600;
+    }
+    .btns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .status-btns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    button {
+      padding: 11px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      background: #2563eb;
+    }
+    button.green { background: #059669; }
+    button.red { background: #dc2626; }
+    button.dark { background: #2a3447; }
+    #info {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #b5c2d6;
+      line-height: 1.4;
+    }
+    #map {
+      height: calc(100vh - 185px);
+      min-height: 320px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Paneli i Korrierit</h1>
-    <div id="porosiBadge" class="porosi-badge">Porosia: KS-101</div>
+  <div class="panel">
+    <div class="top-row">
+      <span id="porosiBadge" class="badge">Porosia: KS-103</span>
+      <span id="routeSummary" class="route-info">Rruga: -- km • -- min</span>
+    </div>
 
-    <div class="row">
+    <div class="btns">
       <button class="green" onclick="nisesGps()">Nis GPS Live</button>
-      <button class="orange" onclick="ndaloGps()">Ndalo GPS</button>
-      <button class="gray" onclick="simuloLevjzje()">Simulo Lëvizje</button>
+      <button class="red" onclick="ndaloGps()">Ndalo</button>
+      <button class="dark" onclick="simuloLevjzje()">Simulo Rrugën</button>
     </div>
 
-    <div class="row">
-      <button onclick="dergoStatus('U nis nga posta')">U nis nga posta</button>
-      <button onclick="dergoStatus('Rrugës drejt klientit')">Rrugës drejt klientit</button>
-      <button class="green" onclick="dergoStatus('Dorëzuar me sukses')">Dorëzuar me sukses</button>
+    <div class="status-btns">
+      <button onclick="dergoStatus('U nis nga posta')">U nis</button>
+      <button onclick="dergoStatus('Rrugës drejt klientit')">Rrugës</button>
+      <button class="green" onclick="dergoStatus('Dorëzuar me sukses')">Dorëzuar</button>
     </div>
 
-    <div id="info">Gjendja: Në pritje...</div>
+    <div id="info">Gati për nisje. Lejo GPS-in ose shtyp "Simulo Rrugën" për të parë rrugën në hartë.</div>
   </div>
 
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
     const params = new URLSearchParams(window.location.search);
-    const porosiaId = (params.get('porosia') || 'KS-101').trim() || 'KS-101';
+    const porosiaId = (params.get('porosia') || 'KS-103').trim() || 'KS-103';
+
+    const rawLat = parseFloat(params.get('lat'));
+    const rawLng = parseFloat(params.get('lng'));
+    const destLat = !Number.isNaN(rawLat) ? rawLat : 42.3745;
+    const destLng = !Number.isNaN(rawLng) ? rawLng : 21.1515;
+
+    let korrierLat = 42.3655;
+    let korrierLng = 21.1450;
+
     document.getElementById('porosiBadge').innerText = `Porosia: ${porosiaId}`;
+
+    const map = L.map('map').setView([korrierLat, korrierLng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    L.marker([destLat, destLng]).addTo(map).bindPopup('Destinacioni (Klienti)');
+    const korrierMarker = L.marker([korrierLat, korrierLng]).addTo(map).bindPopup('Ti (Korrieri)').openPopup();
+
+    const vijaRruges = L.polyline([[korrierLat, korrierLng], [destLat, destLng]], {
+      color: '#10b981',
+      weight: 5,
+      opacity: 0.9
+    }).addTo(map);
 
     let watchId = null;
     let simInterval = null;
-    let simLat = 42.3655;
-    let simLng = 21.1450;
 
     socket.on('connect', () => {
       socket.emit('bashkohu-porosise', porosiaId);
     });
 
-    function dergoKoordinata(lat, lng) {
+    async function vizatoRrugenKorrierit(lat1, lng1, lat2, lng2) {
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes && data.routes[0] && data.routes[0].geometry) {
+          const pika = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+          vijaRruges.setLatLngs(pika);
+          const km = (data.routes[0].distance / 1000).toFixed(2);
+          const min = Math.max(1, Math.round(data.routes[0].duration / 60));
+          document.getElementById('routeSummary').innerText = `Rruga: ${km} km • ~${min} min`;
+          return;
+        }
+      } catch (e) {}
+      vijaRruges.setLatLngs([[lat1, lng1], [lat2, lng2]]);
+    }
+
+    function perditesoPozicionin(lat, lng) {
+      korrierLat = lat;
+      korrierLng = lng;
+      korrierMarker.setLatLng([lat, lng]);
+      map.panTo([lat, lng]);
+      vizatoRrugenKorrierit(lat, lng, destLat, destLng);
+
       socket.emit('koordinata-korrieri', {
         porosia: porosiaId,
         lat,
         lng
       });
+
       document.getElementById('info').innerText =
-        `Po dërgohen koordinatat për ${porosiaId}:\nLat: ${lat.toFixed(6)} | Lng: ${lng.toFixed(6)}`;
+        `Pozicioni live: ${lat.toFixed(5)}, ${lng.toFixed(5)} -> Destinacioni: ${destLat.toFixed(5)}, ${destLng.toFixed(5)}`;
     }
 
     function nisesGps() {
@@ -132,10 +191,9 @@
       }
       if (watchId !== null) return;
 
+      dergoStatus('Rrugës drejt klientit');
       watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          dergoKoordinata(pos.coords.latitude, pos.coords.longitude);
-        },
+        (pos) => perditesoPozicionin(pos.coords.latitude, pos.coords.longitude),
         (err) => {
           document.getElementById('info').innerText = `Gabim GPS: ${err.message}`;
         },
@@ -152,19 +210,20 @@
         clearInterval(simInterval);
         simInterval = null;
       }
-      document.getElementById('info').innerText = 'Transmetimi i pozicionit u ndal.';
+      document.getElementById('info').innerText = 'Transmetimi u ndal.';
     }
 
     function simuloLevjzje() {
       ndaloGps();
-      simLat = 42.3655;
-      simLng = 21.1450;
+      let lat = 42.3655;
+      let lng = 21.1450;
       dergoStatus('Rrugës drejt klientit');
+      perditesoPozicionin(lat, lng);
 
       simInterval = setInterval(() => {
-        simLat += 0.0005;
-        simLng += 0.0003;
-        dergoKoordinata(simLat, simLng);
+        lat += (destLat - lat) * 0.14;
+        lng += (destLng - lng) * 0.14;
+        perditesoPozicionin(lat, lng);
       }, 1500);
     }
 
@@ -175,6 +234,8 @@
       });
       document.getElementById('info').innerText = `Statusi u dërgua: ${statusi}`;
     }
+
+    vizatoRrugenKorrierit(korrierLat, korrierLng, destLat, destLng);
   </script>
 </body>
 </html>
