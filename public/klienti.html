@@ -49,7 +49,21 @@ const vijaRruges = L.polyline([[klientLat, klientLng], [klientLat, klientLng]], 
       const minuta = Math.max(1, Math.round((distancaKm / shpejtesiaMesatare) * 60));
       return { distancaKm: distancaKm.toFixed(2), minuta };
     }
-
+async function perditesoRrugen(lat1, lng1, lat2, lng2) {
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.routes && data.routes[0] && data.routes[0].geometry) {
+      const pika = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      vijaRruges.setLatLngs(pika);
+      return;
+    }
+  } catch (err) {
+    console.warn('Gabim te rruga OSRM:', err);
+  }
+  vijaRruges.setLatLngs([[lat1, lng1], [lat2, lng2]]);
+}
     socket.on('connect', () => {
       console.log('Klienti u lidh me serverin:', socket.id);
     });
@@ -60,7 +74,8 @@ const vijaRruges = L.polyline([[klientLat, klientLng], [klientLat, klientLng]], 
 
       korrierMarker.setLatLng([data.lat, data.lng]);
       map.panTo([data.lat, data.lng]);
-vijaRruges.setLatLngs([[data.lat, data.lng], [klientLat, klientLng]]);
+perditesoRrugen(data.lat, data.lng, klientLat, klientLng);
+```
       const info = llogaritMinutat(data.lat, data.lng, klientLat, klientLng);
       document.getElementById('eta').innerText = `Distanca: ${info.distancaKm} km | Arrin për rreth: ${info.minuta} min`;
     });
