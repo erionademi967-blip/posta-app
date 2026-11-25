@@ -35,7 +35,7 @@
       gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
     input {
       padding: 10px 12px;
@@ -44,7 +44,7 @@
       border: 1px solid #444;
       background: #111;
       color: #fff;
-      width: 210px;
+      width: 230px;
     }
     button {
       padding: 10px 14px;
@@ -55,123 +55,123 @@
       color: #fff;
       background: #0984e3;
     }
-    button.gen {
-      background: #6c5ce7;
-    }
-    button.copy {
+    button.green {
       background: #00b894;
     }
-    button.open {
-      background: #e17055;
+    button.gray {
+      background: #444;
     }
-    .box {
+    .link-box {
       background: #121212;
       border: 1px solid #2e2e2e;
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 8px;
+      padding: 12px;
       margin-top: 12px;
       text-align: left;
-    }
-    .label {
-      font-size: 13px;
-      color: #00cec9;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-    .link-text {
       word-break: break-all;
       font-size: 13px;
-      color: #eee;
-      background: #1d1d1d;
-      padding: 8px;
-      border-radius: 6px;
-      margin-bottom: 10px;
     }
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .label {
+      color: #00cec9;
+      font-weight: bold;
+      margin-bottom: 4px;
+      display: block;
     }
-    .toast {
-      margin-top: 12px;
-      font-size: 13px;
+    .msg {
+      margin-top: 10px;
       color: #00b894;
+      font-size: 13px;
       min-height: 18px;
     }
   </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00b894" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
 </head>
 <body>
   <div class="card">
-    <h1>Paneli i Biznesit</h1>
-    <p class="sub">Krijo ose zgjidh një kod porosie për të gjeneruar linket e gjurmimit.</p>
+    <h1>Paneli i Biznesit / Postës</h1>
+    <p class="sub">Shkruaj kodin e porosisë dhe koordinatat e klientit për të gjeneruar linket.</p>
 
     <div class="row">
-      <input id="kodiInput" type="text" value="KS-102" placeholder="p.sh. KS-102" />
-      <input id="latInput" type="number" step="any" value="42.3702" placeholder="Lat (p.sh. 42.3702)" />
-      <input id="lngInput" type="number" step="any" value="21.1483" placeholder="Lng (p.sh. 21.1483)" />
-      <button class="gen" onclick="gjeneroKod()">Gjenero Kod</button>
-      <button onclick="perditesoLinket()">Përditëso Linket</button>
+      <input id="porosiaInput" type="text" placeholder="p.sh. KS-103" value="KS-103" />
+      <button class="green" onclick="perditesoLinket()">Përditëso Linket</button>
     </div>
 
-    <div class="box">
-      <div class="label">Linku për Klientin</div>
-      <div id="linkKlienti" class="link-text"></div>
-      <div class="actions">
-        <button class="copy" onclick="kopjo('linkKlienti')">Kopjo Linkun</button>
-        <button class="open" onclick="hap('linkKlienti')">Hap Klientin</button>
+    <div class="row">
+      <input id="latInput" type="text" placeholder="Lat p.sh. 42.3702" value="42.3702" />
+      <input id="lngInput" type="text" placeholder="Lng p.sh. 21.1483" value="21.1483" />
+    </div>
+
+    <div class="link-box">
+      <span class="label">Linku për Klientin:</span>
+      <div id="linkKlienti"></div>
+      <div class="row" style="margin-top:8px; justify-content:flex-start;">
+        <button onclick="kopjo('klient')">Kopjo Linkun</button>
+        <button class="gray" onclick="hap('klient')">Hap Klientin</button>
       </div>
     </div>
 
-    <div class="box">
-      <div class="label">Linku për Korrierin</div>
-      <div id="linkKorrieri" class="link-text"></div>
-      <div class="actions">
-        <button class="copy" onclick="kopjo('linkKorrieri')">Kopjo Linkun</button>
-        <button class="open" onclick="hap('linkKorrieri')">Hap Korrierin</button>
+    <div class="link-box">
+      <span class="label">Linku për Korrierin:</span>
+      <div id="linkKorrieri"></div>
+      <div class="row" style="margin-top:8px; justify-content:flex-start;">
+        <button onclick="kopjo('korrier')">Kopjo Linkun</button>
+        <button class="gray" onclick="hap('korrier')">Hap Korrierin</button>
       </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div id="mesazhi" class="msg"></div>
   </div>
 
   <script>
-    function merrKodin() {
-      const val = document.getElementById('kodiInput').value.trim();
+    const baseUrl = window.location.origin;
+
+    function getKodi() {
+      const val = document.getElementById('porosiaInput').value.trim();
       return val || 'KS-101';
     }
 
-    function gjeneroKod() {
-      const numri = Math.floor(100 + Math.random() * 900);
-      document.getElementById('kodiInput').value = `KS-${numri}`;
-      perditesoLinket();
+    function getKoordinatat() {
+      const lat = parseFloat(document.getElementById('latInput').value.trim());
+      const lng = parseFloat(document.getElementById('lngInput').value.trim());
+      return {
+        lat: !Number.isNaN(lat) ? lat : 42.3702,
+        lng: !Number.isNaN(lng) ? lng : 21.1483
+      };
     }
 
     function perditesoLinket() {
-    const kodi = encodeURIComponent(merrKodin());
-    const latVal = parseFloat(document.getElementById('latInput').value);
-    const lngVal = parseFloat(document.getElementById('lngInput').value);
-    const base = window.location.origin;
-
-    let klientUrl = `${base}/klienti.html?porosia=${kodi}`;
-    if (!Number.isNaN(latVal) && !Number.isNaN(lngVal)) {
-      klientUrl += `&lat=${encodeURIComponent(latVal)}&lng=${encodeURIComponent(lngVal)}`;
+      const kodi = encodeURIComponent(getKodi());
+      const { lat, lng } = getKoordinatat();
+      document.getElementById('linkKlienti').innerText =
+        `${baseUrl}/klienti.html?porosia=${kodi}&lat=${lat}&lng=${lng}`;
+      document.getElementById('linkKorrieri').innerText =
+        `${baseUrl}/korrieri.html?porosia=${kodi}`;
+      document.getElementById('mesazhi').innerText = 'Linket u përditësuan.';
     }
 
-    document.getElementById('linkKlienti').innerText = klientUrl;
-    document.getElementById('linkKorrieri').innerText = `${base}/korrieri.html?porosia=${kodi}`;
-  }
-    function kopjo(elementId) {
-      const teksti = document.getElementById(elementId).innerText;
+    function kopjo(lloji) {
+      const teksti =
+        lloji === 'klient'
+          ? document.getElementById('linkKlienti').innerText
+          : document.getElementById('linkKorrieri').innerText;
+
       navigator.clipboard.writeText(teksti).then(() => {
-        document.getElementById('toast').innerText = 'Linku u kopjua!';
-        setTimeout(() => {
-          document.getElementById('toast').innerText = '';
-        }, 2000);
+        document.getElementById('mesazhi').innerText = 'Linku u kopjua në clipboard!';
       });
     }
 
-    function hap(elementId) {
-      const url = document.getElementById(elementId).innerText;
+    function hap(lloji) {
+      const url =
+        lloji === 'klient'
+          ? document.getElementById('linkKlienti').innerText
+          : document.getElementById('linkKorrieri').innerText;
+
       window.open(url, '_blank');
     }
 
