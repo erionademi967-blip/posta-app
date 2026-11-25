@@ -5,43 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paneli i Biznesit / Postës</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00d2a0" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px 14px 36px;
+      padding: 20px 14px 40px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at top, #182232 0%, #0d1017 65%);
-      color: #f4f6fb;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.14), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.16), transparent 42%),
+        #0b0e14;
+      color: #f8fafc;
       text-align: center;
     }
     .card {
-      max-width: 640px;
+      max-width: 660px;
       margin: 0 auto;
-      background: #161b26;
-      border: 1px solid #262f40;
-      border-radius: 16px;
+      background: #131822;
+      border: 1px solid #222b3d;
+      border-radius: 18px;
       padding: 22px;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
     }
     .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       font-size: 13px;
     }
     .top-nav a {
-      color: #5ef2c8;
+      color: #6ee7b7;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
     h1 {
       margin: 0 0 6px;
-      font-size: 22px;
+      font-size: 24px;
     }
     p.sub {
-      color: #a3b1c6;
+      color: #94a3b8;
       font-size: 14px;
       margin: 0 0 18px;
       line-height: 1.45;
@@ -54,44 +64,50 @@
       margin-bottom: 12px;
     }
     input {
-      padding: 10px 12px;
+      padding: 11px 13px;
       font-size: 15px;
-      border-radius: 10px;
-      border: 1px solid #2f3b52;
-      background: #0e121a;
+      border-radius: 11px;
+      border: 1px solid #2b364d;
+      background: #0c1018;
       color: #fff;
       width: 220px;
     }
     button {
-      padding: 10px 14px;
+      padding: 11px 15px;
       font-size: 14px;
       font-weight: 700;
       border: none;
-      border-radius: 10px;
+      border-radius: 11px;
       cursor: pointer;
       color: #fff;
       background: #2563eb;
     }
-    button.green { background: #059669; }
-    button.gray { background: #2d3748; }
+    button.green {
+      background: #10b981;
+      color: #05130e;
+    }
+    button.gray {
+      background: #252f42;
+    }
     .hint {
       font-size: 12px;
       color: #67e8f9;
-      margin: 8px 0 6px;
+      margin: 10px 0 6px;
+      font-weight: 600;
     }
     #pickerMap {
       height: 270px;
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid #2d3748;
+      border-radius: 14px;
+      border: 1px solid #283348;
       margin-bottom: 14px;
       cursor: crosshair;
     }
     .link-box {
-      background: #10141d;
-      border: 1px solid #252e3f;
-      border-radius: 12px;
-      padding: 12px;
+      background: #0e131c;
+      border: 1px solid #222b3d;
+      border-radius: 14px;
+      padding: 13px;
       margin-top: 12px;
       text-align: left;
       word-break: break-all;
@@ -99,42 +115,35 @@
     }
     .label {
       color: #67e8f9;
-      font-weight: 700;
-      margin-bottom: 5px;
+      font-weight: 800;
+      margin-bottom: 6px;
       display: block;
     }
     .msg {
       margin-top: 12px;
-      color: #5ef2c8;
+      color: #6ee7b7;
       font-size: 13px;
       min-height: 18px;
-      font-weight: 600;
+      font-weight: 700;
     }
   </style>
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00b894" />
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
-  </script>
 </head>
 <body>
   <div class="card">
     <div class="top-nav">
-      <a href="/">← Faqja Kryesore</a>
+      <a href="/">← Kryefaqja</a>
       <a href="/admin.html">Kontrolli Qendror →</a>
     </div>
 
     <h1>Paneli i Biznesit / Postës</h1>
-    <p class="sub">Shkruaj kodin e porosisë dhe kliko në hartë (ose ndrysho koordinatat) për të gjeneruar linket.</p>
+    <p class="sub">Shkruaj kodin e porosisë dhe kliko mbi hartë për të caktuar pikën e klientit.</p>
 
     <div class="row">
       <input id="porosiaInput" type="text" placeholder="p.sh. KS-105" value="KS-105" />
       <button class="green" onclick="perditesoLinket()">Përditëso Linket</button>
     </div>
 
-    <div class="hint">Kliko mbi hartë për të vendosur pikën e saktë të klientit:</div>
+    <div class="hint">Kliko në hartë për të vendosur destinacionin e klientit:</div>
     <div id="pickerMap"></div>
 
     <div class="row">
