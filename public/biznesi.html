@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Erioni Delivery — Porosi e Re</title>
+  <title>Erioni Delivery — Krijo Porosi</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#38bdf8" />
+  <meta name="theme-color" content="#00e5a8" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
@@ -16,22 +16,22 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px 14px 40px;
+      padding: 20px 14px 44px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background:
-        radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.15), transparent 40%),
-        radial-gradient(circle at 88% 15%, rgba(16, 185, 129, 0.14), transparent 42%),
-        #070a10;
+        radial-gradient(circle at 15% 10%, rgba(0, 229, 168, 0.14), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.16), transparent 42%),
+        #060911;
       color: #f8fafc;
     }
     .card {
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
-      background: #0e1420;
+      background: #0e1422;
       border: 1px solid #1e293b;
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.5);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
     }
     .top-nav {
       display: flex;
@@ -41,14 +41,13 @@
       font-size: 13px;
     }
     .top-nav a {
-      color: #7dd3fc;
+      color: #5ef2c8;
       text-decoration: none;
       font-weight: 800;
     }
     h1 {
       margin: 0 0 6px;
-      font-size: 24px;
-      letter-spacing: -0.3px;
+      font-size: 25px;
     }
     p.sub {
       color: #94a3b8;
@@ -56,18 +55,18 @@
       margin: 0 0 18px;
       line-height: 1.5;
     }
-    .form-grid {
+    .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-bottom: 12px;
     }
     @media (max-width: 560px) {
-      .form-grid { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
     }
-    .field label {
+    label {
       display: block;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
       color: #94a3b8;
       margin-bottom: 5px;
@@ -78,48 +77,47 @@
       width: 100%;
       padding: 11px 13px;
       font-size: 14.5px;
-      border-radius: 11px;
+      border-radius: 12px;
       border: 1px solid #24324d;
-      background: #090d15;
+      background: #080c14;
       color: #fff;
     }
     .hint {
       font-size: 12px;
-      color: #6ee7b7;
+      color: #7dd3fc;
       margin: 10px 0 7px;
       font-weight: 700;
     }
     #pickerMap {
       height: 280px;
       width: 100%;
-      border-radius: 14px;
+      border-radius: 15px;
       border: 1px solid #24324d;
       margin-bottom: 14px;
       cursor: crosshair;
     }
-    .btn-green {
+    .btn-main {
       width: 100%;
       padding: 12px 16px;
       font-size: 14.5px;
       font-weight: 900;
       border: none;
-      border-radius: 12px;
+      border-radius: 13px;
       cursor: pointer;
-      background: linear-gradient(135deg, #0ea5e9, #10b981);
+      background: linear-gradient(135deg, #00e5a8, #38bdf8);
       color: #041016;
-      margin-bottom: 8px;
     }
     .link-box {
-      background: #090d15;
+      background: #080c14;
       border: 1px solid #1e293b;
-      border-radius: 14px;
-      padding: 13px;
+      border-radius: 15px;
+      padding: 14px;
       margin-top: 12px;
       word-break: break-all;
       font-size: 13px;
     }
-    .label {
-      color: #7dd3fc;
+    .lbl {
+      color: #5ef2c8;
       font-weight: 800;
       margin-bottom: 6px;
       display: block;
@@ -137,16 +135,19 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      color: #fff;
-      background: #2563eb;
+      color: #041016;
+      background: #38bdf8;
     }
-    button.gray { background: #1e293b; }
+    button.gray {
+      background: #1e293b;
+      color: #f8fafc;
+    }
     .msg {
       margin-top: 12px;
-      color: #6ee7b7;
+      color: #5ef2c8;
       font-size: 13px;
       min-height: 18px;
-      font-weight: 700;
+      font-weight: 800;
       text-align: center;
     }
   </style>
@@ -154,42 +155,42 @@
 <body>
   <div class="card">
     <div class="top-nav">
-      <a href="/">← Erioni Delivery</a>
-      <a href="/admin.html">Dispatch Control →</a>
+      <a href="/">← Kryefaqja</a>
+      <a href="/admin.html">Kontrolli Qendror →</a>
     </div>
 
     <h1>Porosi e Re — Erioni Delivery</h1>
-    <p class="sub">Plotëso kodin, numrin e shtëpisë/ndërtesës dhe kliko mbi hartë për pikën e saktë të klientit.</p>
+    <p class="sub">Shkruaj kodin, numrin e shtëpisë dhe kliko mbi hartë për të caktuar pikën e saktë të dërgesës.</p>
 
-    <div class="form-grid">
-      <div class="field">
+    <div class="grid-2">
+      <div>
         <label>Kodi i Porosisë</label>
-        <input id="porosiaInput" type="text" placeholder="p.sh. ED-205" value="ED-205" oninput="perditesoLinket()" />
+        <input id="porosiaInput" type="text" value="ED-205" oninput="perditesoLinket()" />
       </div>
-      <div class="field">
+      <div>
         <label>Nr. Shtëpisë / Detaj Adrese</label>
-        <input id="nrInput" type="text" placeholder="p.sh. Nr. 14, Kati 3" value="Nr. 14" oninput="perditesoLinket()" />
+        <input id="nrInput" type="text" value="Nr. 14" oninput="perditesoLinket()" />
       </div>
     </div>
 
-    <div class="hint">Kliko mbi hartë për të vendosur destinacionin e klientit:</div>
+    <div class="hint">Kliko në hartë për të vendosur destinacionin e klientit:</div>
     <div id="pickerMap"></div>
 
-    <div class="form-grid">
-      <div class="field">
+    <div class="grid-2">
+      <div>
         <label>Gjerësia (Lat)</label>
         <input id="latInput" type="text" value="42.3702" oninput="sinkronizoNgaInput()" />
       </div>
-      <div class="field">
+      <div>
         <label>Gjatësia (Lng)</label>
         <input id="lngInput" type="text" value="21.1483" oninput="sinkronizoNgaInput()" />
       </div>
     </div>
 
-    <button class="btn-green" onclick="perditesoLinket('Linket e porosisë u gjeneruan me sukses!')">Gjenero / Përditëso Linket</button>
+    <button class="btn-main" onclick="perditesoLinket('Linket u përditësuan me sukses!')">Përditëso Linket</button>
 
     <div class="link-box">
-      <span class="label">Linku për Klientin:</span>
+      <span class="lbl">Linku për Klientin:</span>
       <div id="linkKlienti"></div>
       <div class="row">
         <button class="act" onclick="kopjo('klient')">Kopjo Linkun</button>
@@ -198,7 +199,7 @@
     </div>
 
     <div class="link-box">
-      <span class="label">Linku për Korrierin:</span>
+      <span class="lbl">Linku për Korrierin:</span>
       <div id="linkKorrieri"></div>
       <div class="row">
         <button class="act" onclick="kopjo('korrier')">Kopjo Linkun</button>
@@ -216,7 +217,7 @@
     const initialLng = 21.1483;
 
     const pickerMap = L.map('pickerMap').setView([initialLat, initialLng], 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19
     }).addTo(pickerMap);
 
@@ -261,7 +262,7 @@
       document.getElementById('latInput').value = lat;
       document.getElementById('lngInput').value = lng;
       klientPickerMarker.setLatLng([lat, lng]);
-      perditesoLinket(`Pika u caktua në hartë (${lat}, ${lng}).`);
+      perditesoLinket(`Pika u zgjodh në hartë (${lat}, ${lng}).`);
     });
 
     function sinkronizoNgaInput() {
@@ -278,7 +279,7 @@
           : document.getElementById('linkKorrieri').innerText;
 
       navigator.clipboard.writeText(teksti).then(() => {
-        document.getElementById('mesazhi').innerText = 'Linku u kopjua!';
+        document.getElementById('mesazhi').innerText = 'Linku u kopjua në clipboard!';
       });
     }
 
